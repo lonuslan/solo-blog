@@ -60,7 +60,7 @@
             </div>
 
             <div class="side__title">
-                <span>ღゝ◡╹)ノ❤️</span>
+                <span>- Categories -</span>
             </div>
             <ul class="side__nav">
                 <li>

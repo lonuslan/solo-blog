@@ -71,10 +71,10 @@ window.Skin = {
       if (timer) clearTimeout(timer)
       if (document.hidden) {
         timer = setTimeout(function () {
-          document.title = '(◍´꒳`◍)' + ' - ' + blogTitle
+          document.title = '+_+! --> ' + blogTitle
         }, 500)
       } else {
-        document.title = '(*´∇｀*) 欢迎回来！'
+        document.title = 'lonus_lan 欢迎回来！'
         timer = setTimeout(function () {
           document.title = blogTitle
         }, 1000)
@@ -173,8 +173,48 @@ window.Skin = {
     })
     $(window).scroll()
   },
-}
+  next : function () {
+    // 设置主页图片
+    window.cnblogsConfig = {
+      homeTopImg: [
+        "https://img.lonuslan.com/lonuslan/20200120/AXsi94kr5YSl.jpg",
+        "https://img.lonuslan.com/lonuslan/20200120/o6RVlf8Tym1S.jpg",
+        "https://img.lonuslan.com/lonuslan/20200120/4Xw4pJJ6wA7X.jpg",
+        "https://img.lonuslan.com/lonuslan/20200120/d4yH2omtFThg.jpg",
+        "https://img.lonuslan.com/lonuslan/20200120/QOBHhXHWcgBu.jpg",
+        "https://img.lonuslan.com/lonuslan/20200120/XznCEJWcH0oG.jpg",
+        "https://img.lonuslan.com/lonuslan/20200120/G0pKoHpLTSqp.jpg",
+        "https://img.lonuslan.com/lonuslan/20200120/9P2HW1O4DSNl.jpg",
+        "https://img.lonuslan.com/lonuslan/20200120/IRiGYHISNvks.jpg"
+      ]
+    }
+    let homeTopImg = window.cnblogsConfig.homeTopImg, bgImg;
 
+    homeTopImg.length > 0 ?
+        (homeTopImg.length > 1 ? bgImg = homeTopImg[randomNum(0, homeTopImg.length - 1)] : bgImg = homeTopImg[0])
+        : bgImg = "";
+    console.log("bgImg -->" + bgImg)
+    console.log("测试----> 随机获取header图");
+    $('.header').css({
+      'background': '#222 url('+bgImg+')  center center no-repeat',
+      'background-size': 'cover'
+    });
+  }
+}
+function randomNum(minNum,maxNum) {
+  switch(arguments.length){
+    case 1:
+      return parseInt(Math.random()*minNum+1);
+      break;
+    case 2:
+      return parseInt(Math.random()*(maxNum-minNum+1)+minNum);
+      break;
+    default:
+      return 0;
+      break;
+  }
+};
 $(document).ready(function () {
   Skin.init()
+  Skin.next()
 })
