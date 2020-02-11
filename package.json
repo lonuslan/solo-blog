@@ -36,6 +36,7 @@
     "css-loader": "^3.4.2",
     "extract-loader": "^3.1.0",
     "file-loader": "^5.0.2",
+    "node-sass": "^4.13.1",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^8.0.2",
@@ -46,10 +47,8 @@
   "dependencies": {
     "jquery": "^3.4.1",
     "nprogress": "^0.2.0",
-    "python": "0.0.4",
-    "sass": "^1.25.0",
     "uvstat": "^1.0.7",
     "vcmt": "^1.1.0",
-    "vditor": "^2.1.4"
+    "vditor": "^2.1.5"
   }
 }
