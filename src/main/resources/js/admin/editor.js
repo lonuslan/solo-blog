@@ -76,7 +76,6 @@ $.extend(SoloEditor.prototype, {
       },
       lang: Label.localeString,
     }
-
       options.hint =  {
           delay: 200,
           emoji: {
