@@ -18,6 +18,7 @@
 <@head title="${blogTitle}">
     <link rel="stylesheet" href="${staticServePath}/skins/${skinDirName}/css/base.css?${staticResourceVersion}"/>
 </@head>
+
 </head>
 <body class="fn__flex-column">
 <div id="pjax" class="fn__flex-1">
@@ -29,6 +30,15 @@
     </div>
     <#if pjax><!---- pjax {#pjax} end ----></#if>
 </div>
+<meting-js
+        server="netease"
+        type="playlist"
+        id="3002544701"
+        theme="#33ccff"
+        fixed="true"
+        list-max-height="150px"
+        list-folded="true">
+</meting-js>
 <#include "footer.ftl">
 </body>
 </html>

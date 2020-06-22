@@ -34,6 +34,7 @@
                 <#list tags as tag>
                     <a rel="tag" data-count="${tag.tagPublishedRefCount}" class="other__item fn__left"
                        href="${servePath}/tags/${tag.tagTitle?url('UTF-8')}">
+                        <img src="https://img.lonuslan.com/lonuslan/20200421/wfISc2Dop8R4.png">
                         ${tag.tagTitle} - <b>${tag.tagPublishedRefCount}</b> ${countLabel}
                     </a>
                 </#list>
@@ -43,6 +44,15 @@
     </div>
     <#if pjax><!---- pjax {#pjax} end ----></#if>
 </div>
+<meting-js
+        server="netease"
+        type="playlist"
+        id="3002544701"
+        theme="#33ccff"
+        fixed="true"
+        list-max-height="150px"
+        list-folded="true">
+</meting-js>
 <#include "footer.ftl">
 </body>
 </html>

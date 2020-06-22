@@ -45,6 +45,15 @@
     </div>
     <#if pjax><!---- pjax {#pjax} end ----></#if>
 </div>
+<meting-js
+        server="netease"
+        type="playlist"
+        id="3002544701"
+        theme="#33ccff"
+        fixed="true"
+        list-max-height="150px"
+        list-folded="true">
+</meting-js>
 <#include "footer.ftl">
 </body>
 </html>

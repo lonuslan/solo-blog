@@ -25,7 +25,8 @@
     <#include "macro-header.ftl">
     <@header type='index'></@header>
     <div class="wrapper">
-        <h2 class="other__title"><a href="${servePath}/tags.html" class="ft__a">${allTagsLabel}</a> - ${tag.tagTitle}
+        <h2 class="other__title"><a href="${servePath}/tags.html" class="ft__a">
+                ${allTagsLabel}</a> - ${tag.tagTitle}
         </h2>
         <div class="ft__center">
             ${tag.tagPublishedRefCount} ${cntArticleLabel}
@@ -34,6 +35,15 @@
     </div>
     <#if pjax><!---- pjax {#pjax} end ----></#if>
 </div>
+<meting-js
+        server="netease"
+        type="playlist"
+        id="3002544701"
+        theme="#33ccff"
+        fixed="true"
+        list-max-height="150px"
+        list-folded="true">
+</meting-js>
 <#include "footer.ftl">
 </body>
 </html>

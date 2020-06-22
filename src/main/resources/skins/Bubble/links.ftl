@@ -35,6 +35,7 @@
                 <#list links as link>
                     <div class="other__item">
                         <a rel="friend" href="${link.linkAddress}" target="_blank">
+                            <img id="friend_link_icon" src="${link.linkIcon}">
                             ${link.linkTitle}
                         </a>
                         <div>${link.linkDescription}</div>
@@ -44,6 +45,15 @@
             <br><br>
         </div>
     </div>
+    <meting-js
+            server="netease"
+            type="playlist"
+            id="3002544701"
+            theme="#33ccff"
+            fixed="true"
+            list-max-height="150px"
+            list-folded="true">
+    </meting-js>
     <#if pjax><!---- pjax {#pjax} end ----></#if>
     <#include "footer.ftl">
 </body>

@@ -94,6 +94,9 @@
         </div>
         </#if>
     </#if>
+
+
+
     <div class="article__bottom">
         <div class="wrapper">
             <div class="fn__flex">
@@ -132,5 +135,14 @@
     Skin.initArticle()
 </@comment_script>
 <#if pjax><!---- pjax {#pjax} end ----></#if>
+<meting-js
+        server="netease"
+        type="playlist"
+        id="3002544701"
+        theme="#33ccff"
+        fixed="true"
+        list-max-height="150px"
+        list-folded="true">
+</meting-js>
 </body>
 </html>

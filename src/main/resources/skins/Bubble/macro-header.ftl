@@ -16,7 +16,10 @@
     <header class="header header--${type}">
         <div class="wrapper header__title">
             <h1 class="header__h1 fn__flex-inline">
-                <a href="${servePath}" rel="start">${blogTitle}</a>
+                <a href="${servePath}" rel="start" id="elements">${blogTitle}</a>
+<#--                <div id="elements">-->
+<#--                    ${blogTitle}-->
+<#--                </div>-->
             </h1>
             <h2 class="header__desc header__desc--title">${blogSubtitle}</h2>
             <div class="header__desc">
@@ -27,6 +30,9 @@
             </svg>
         </div>
     </header>
+    <div class="otherblog">
+        <a href="https://www.lonuslan.xyz" target="_blank">隐藏博客</a>
+    </div>
     <div class="side__menu">
         <svg viewBox="0 0 32 32" width="100%" height="100%">
             <path d="M30 18h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2h28c1.1 0 2 0.9 2 2s-0.9 2-2 2zM30 6.25h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2h28c1.1 0 2 0.9 2 2s-0.9 2-2 2zM2 25.75h28c1.1 0 2 0.9 2 2s-0.9 2-2 2h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2z"></path>
@@ -44,7 +50,7 @@
             </svg>
 
             <div class="side__header">
-                <a href="${servePath}" rel="start"><img class="side__logo" alt="${blogTitle}" src="${adminUser.userAvatar}"></a>
+                <a href="${servePath}" rel="start"><img class="side__logo" src="${adminUser.userAvatar}"></a>
 
                 <div class="side__meta">
                     ${statistic.statisticPublishedBlogArticleCount} ${articleLabel} <br>
@@ -54,11 +60,12 @@
             </div>
 
             <div class="side__title">
-                <span>ღゝ◡╹)ノ❤️</span>
+                <span>- Categories -</span>
             </div>
             <ul class="side__nav">
                 <li>
                     <a href="${servePath}" rel="start">
+                        <img src="https://img.lonuslan.com/lonuslan/20200421/QmaAUt65NIfF.png">
                         <#if type == 'article'>
                             ${blogTitle}
                         <#else>
@@ -69,45 +76,45 @@
                 <#list pageNavigations as page>
                     <li>
                         <a href="${page.pagePermalink}" target="${page.pageOpenTarget}"><#if page.pageIcon != ''><img
-                                class="page-icon" src="${page.pageIcon}" alt="${page.pageTitle}"></#if>${page.pageTitle}</a>
+                                class="page-icon" src="${page.pageIcon}"></#if>${page.pageTitle}</a>
                     </li>
                 </#list>
                 <li>
-                    <a href="${servePath}/categories.html">${categoryLabel}</a>
+                    <a href="${servePath}/categories.html"><img src="https://img.lonuslan.com/lonuslan/20200421/SKBMJmHCWO1T.png">${categoryLabel}</a>
                 </li>
                 <li>
-                    <a href="${servePath}/tags.html">${allTagsLabel}</a>
+                    <a href="${servePath}/tags.html"><img src="https://img.lonuslan.com/lonuslan/20200421/wfISc2Dop8R4.png">${allTagsLabel}</a>
                 </li>
                 <li>
-                    <a href="${servePath}/archives.html">${archiveLabel}</a>
+                    <a href="${servePath}/archives.html"><img src="https://img.lonuslan.com/lonuslan/20200421/BBs7i0sRuUzt.png">${archiveLabel}</a>
                 </li>
                 <li>
-                    <a href="${servePath}/links.html">${linkLabel}</a>
+                    <a href="${servePath}/links.html"><img src="https://img.lonuslan.com/lonuslan/20200421/OtoN1hxB4QAd.png">${linkLabel}</a>
                 </li>
                 <li>
-                    <a rel="alternate" href="${servePath}/rss.xml">RSS</a>
+                    <a rel="alternate" href="${servePath}/rss.xml"><img src="https://img.lonuslan.com/lonuslan/20200421/zN39o4eSyHHv.png">RSS</a>
                 </li>
                 <#if !staticSite>
                     <li>
-                        <a href="${servePath}/search?keyword=">Search</a>
+                        <a href="${servePath}/search?keyword="><img src="https://img.lonuslan.com/lonuslan/20200421/d8d6a47Giorc.png">Search</a>
                     </li>
                 </#if>
                 <#if !staticSite>
                     <#if isLoggedIn>
                         <li>
                             <a href="${servePath}/admin-index.do#main">
-                                ${adminLabel}
+                                <img src="https://img.lonuslan.com/lonuslan/20200421/8ziGo8G1iBtj.png">${adminLabel}
                             </a>
                         </li>
                         <li>
                             <a href="${logoutURL}">
-                                ${logoutLabel}
+                                <img src="https://img.lonuslan.com/lonuslan/20200421/EJHDC4nEq1u6.png">${logoutLabel}
                             </a>
                         </li>
                     <#else>
                         <li>
                             <a rel="alternate" href="${servePath}/start">
-                                ${startToUseLabel}
+                                <img src="https://img.lonuslan.com/lonuslan/20200421/HGIGo5BC0PPR.png">${startToUseLabel}
                             </a>
                         </li>
                     </#if>

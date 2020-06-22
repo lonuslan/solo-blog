@@ -20,7 +20,6 @@
         ${footerContent}
         <span class="footer__heart">❤️</span>
         Powered by <a href="https://solo.b3log.org" target="_blank">Solo</a>
-        <br>
         Theme ${skinDirName}
         <sup>[<a href="https://www.cnblogs.com/jajian" target="_blank">ref</a>]</sup>
         by <a href="http://vanessa.b3log.org" target="_blank">Vanessa</a> <br>
