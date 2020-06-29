@@ -1031,11 +1031,11 @@ a {
   margin-bottom: 50px!important;
 }
 .aplayer.aplayer-fixed{
-  margin-bottom:49px!important;
+  margin-bottom:60px!important;
   max-width:260px!important;
 }
 .aplayer.aplayer-fixed .aplayer-list{
-  margin-bottom: 66px!important;
+  margin-bottom: 0.1px!important;
 }
 .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body{
   left: -66px!important;
@@ -1047,6 +1047,9 @@ a {
 }
 .aplayer .aplayer-miniswitcher{
   background: #00cc00!important;
+}
+.aplayer .aplayer-pic{
+  border-radius: 100% !important;
 }
 
 //aboutMe 样式
