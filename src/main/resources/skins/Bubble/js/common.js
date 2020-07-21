@@ -253,7 +253,7 @@ $(document).ready(function () {
   Skin.init();
   Skin.next();
   Skin.three();
-  show_animation();
+  // show_animation();
   // postFloat();
   // toAnotherBlog();
 })
@@ -428,3 +428,4 @@ var show_animation=new function(){
 // })(jQuery);
 // // 插件调用
 // $(".checkin").Checkin();
+

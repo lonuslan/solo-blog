@@ -1067,7 +1067,12 @@ a {
   color: #CA1B1E;
   margin: auto;
 }
-
+//.title_name{
+//  color: #CA1B1E;
+//}
+#elements{
+  color: #CA1B1E;
+}
 //TODO 新增鼠标样式
 html{
   cursor: url("https://img.lonuslan.com/lonuslan/20200502/InKHIJ0NtpfO.ico"), auto;
@@ -1260,4 +1265,23 @@ max-width:860px){
     text-decoration: none;
     color: greenyellow;
   }
+}
+
+//挥手样式
+.styles_wave__1DWv- {
+  animation-duration: 1.8s;
+  animation-iteration-count: infinite;
+  animation-name: styles_wave__1DWv-;
+  display: inline-block;
+  transform-origin: 70% 70%;
+}
+.styles_headline__2NyAR {
+  font-size: 1.5em;
+  font-weight: 700;
+}
+.post-meta a svg{
+  vertical-align: middle;
+}
+.post-date svg{
+  vertical-align: text-top;
 }

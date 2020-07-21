@@ -17,9 +17,7 @@
         <div class="wrapper header__title">
             <h1 class="header__h1 fn__flex-inline">
                 <a href="${servePath}" rel="start" id="elements">${blogTitle}</a>
-<#--                <div id="elements">-->
-<#--                    ${blogTitle}-->
-<#--                </div>-->
+                <span class="styles_wave__1DWv- styles_headline__2NyAR">👋🏼</span>
             </h1>
             <h2 class="header__desc header__desc--title">${blogSubtitle}</h2>
             <div class="header__desc">
