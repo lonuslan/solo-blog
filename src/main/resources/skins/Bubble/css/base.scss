@@ -29,6 +29,7 @@ $link: rgb(119, 182, 255) !default;
 
 body {
   background-color: #f4f8fb;
+  font-family: 'Times New Roman', 'webfont', 'Noto Serif SC','Source Han Serif SC','Source Han Serif','source-han-serif-sc','PT Serif','SongTi SC','MicroSoft Yahei',Georgia,serif;
 }
 
 ::selection {
@@ -1076,6 +1077,7 @@ a {
 //TODO 新增鼠标样式
 html{
   cursor: url("https://img.lonuslan.com/lonuslan/20200502/InKHIJ0NtpfO.ico"), auto;
+  font-family: 'webfont', 'Noto Serif SC','Source Han Serif SC','Source Han Serif','source-han-serif-sc','PT Serif','SongTi SC','MicroSoft Yahei',Georgia,serif;
 }
 //新增文章样式
 
@@ -1189,8 +1191,10 @@ max-width:860px){
   margin-top: 30px;
   /* margin-right: 40px; */
   margin-left: 250px;
-  a:hover{
-    background-color: #00d084;
+  a i{
+    &:hover {
+      color: #CA1B1E;
+    }
   }
 }
 .float-content .post-text{display:inline-block;text-align:justify;font-size:14px}
@@ -1279,9 +1283,30 @@ max-width:860px){
   font-size: 1.5em;
   font-weight: 700;
 }
+//文章页svg span在同一水平线上
 .post-meta a svg{
   vertical-align: middle;
 }
 .post-date svg{
   vertical-align: text-top;
+}
+//修改文章页链接点击样式
+.post-content a{
+  text-decoration: none;
+
+  &:hover{
+    color: #CA1B1E;
+  }
+}
+
+//修改全局字体样式
+@font-face {
+  font-family: 'webfont';
+  font-display: swap;
+  src: url('//at.alicdn.com/t/webfont_2w0ts85zhhw.eot'); /* IE9*/
+  src: url('//at.alicdn.com/t/webfont_2w0ts85zhhw.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('//at.alicdn.com/t/webfont_2w0ts85zhhw.woff2') format('woff2'),
+  url('//at.alicdn.com/t/webfont_2w0ts85zhhw.woff') format('woff'), /* chrome、firefox */
+  url('//at.alicdn.com/t/webfont_2w0ts85zhhw.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+  url('//at.alicdn.com/t/webfont_2w0ts85zhhw.svg#杨任东竹石体-Bold') format('svg'); /* iOS 4.1- */
 }
