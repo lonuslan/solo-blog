@@ -221,15 +221,6 @@ window.Skin = {
       //   'color': 'red'
       //   //"cssText": "font-size:14px;color:red"
       // });
-      const valine = new Valine({
-        el: '.Valine',
-        appId: 'G9biID9XRxn5YbHGv99L9HQ5-9Nh9j0Va',
-        appKey: 'eqfSV7FBGCr0HBqWj0EkbaYS',
-        placeholder: '请输入您的评论:',
-        lang: 'zh-CN',
-        avatar: 'wavatar',
-        enableQQ: true
-      })
       const elementsString = $('#elements').text();
       //$('#elements').text().empty();
       $('#elements').empty();
@@ -242,6 +233,15 @@ window.Skin = {
         cursorChar: '|'
       };
       const typed = new Typed("#elements", options);
+      const valine = new Valine({
+        el: '.Valine',
+        appId: 'G9biID9XRxn5YbHGv99L9HQ5-9Nh9j0Va',
+        appKey: 'eqfSV7FBGCr0HBqWj0EkbaYS',
+        placeholder: '请输入您的评论:',
+        lang: 'zh-CN',
+        avatar: 'wavatar',
+        enableQQ: true
+      });
     })
   }
 };
