@@ -68,7 +68,7 @@ window.Skin = {
           document.title = '+_+! --> ' + blogTitle
         }, 500)
       } else {
-        document.title = 'lonus_lan 欢迎回来！'
+        document.title = 'lonus lan 欢迎回来！'
         timer = setTimeout(function () {
           document.title = blogTitle
         }, 1000)
@@ -233,15 +233,6 @@ window.Skin = {
         cursorChar: '|'
       };
       const typed = new Typed("#elements", options);
-      const valine = new Valine({
-        el: '.Valine',
-        appId: 'G9biID9XRxn5YbHGv99L9HQ5-9Nh9j0Va',
-        appKey: 'eqfSV7FBGCr0HBqWj0EkbaYS',
-        placeholder: '请输入您的评论:',
-        lang: 'zh-CN',
-        avatar: 'wavatar',
-        enableQQ: true
-      });
     })
   }
 };
