@@ -34,6 +34,7 @@
             <#if 0 != links?size>
                 <#list links as link>
                     <div class="other__item">
+                        <img id="friend_link_icon" src="${link.linkIcon}">
                         <a rel="friend" href="${link.linkAddress}" target="_blank">
                             ${link.linkTitle}
                         </a>

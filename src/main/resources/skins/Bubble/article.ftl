@@ -99,6 +99,7 @@
         </div>
     </div>
     <#if pjax><!---- pjax {#pjax} end ----></#if>
+    <#include "define-comment.ftl">
 </div>
 <script type="text/javascript"
         src="${staticServePath}/skins/${skinDirName}/js/TweenMax.min.js?${staticResourceVersion}"
