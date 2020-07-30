@@ -65,7 +65,7 @@
 
 
         <article class="post post-list-thumb" itemscope="" itemtype="http://schema.org/BlogPosting">
-            <div class="post-thumb">
+            <div class="post-thumb-show">
                 <a href="${servePath}${article.articlePermalink}">
                     <img class="lazyload" referrerpolicy="origin" src="${article.articleImg1URL}" onerror="imgError(this,3)" data-src="${article.articleImg1URL}">
                 </a>
