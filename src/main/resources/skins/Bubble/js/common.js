@@ -210,34 +210,15 @@ window.Skin = {
       };
       const typed = new Typed("#elements", options);
       show_animation();
-      var countArticle = 0;
-      //文章页article图片交替出现
-      $("article").each(function () {
-        if (countArticle % 2 == 0){
-          $(".post-thumb-show").addClass("thumb-"+countArticle);
-          $(".thumb-"+countArticle).addClass("post-thumb").removeClass("post-left-thumb");
-          console.log("add post-thumb" + countArticle);
-        }else{
-          $(".post-thumb-show").addClass("thumb-"+countArticle);
-          $(".thumb-"+countArticle).addClass("post-left-thumb").removeClass("post-thumb");
-          console.log("add post-left-thumb" + countArticle);
+      // //文章页article图片交替出现
+      $("article").each(function (index, element) {
+        if (index % 2 == 0){
+          $(element).find(".post-thumb-show").addClass("post-thumb").removeClass("post-left-thumb");
         }
-        countArticle++;
-      });
-
-
-      var count = 0;
-      $("div").each(function () {
-        if (count % 2 == 0){
-          $(".post").addClass("thumb-"+count);
-          $(".thumb-"+count).addClass("post-right").removeClass("post-left");
-        }else{
-          $(".post").addClass("thumb-"+count);
-          $(".thumb-"+count).addClass("post-left").removeClass("post-right");
+        else{
+          $(element).find(".post-thumb-show").addClass("post-left-thumb").removeClass("post-thumb");
         }
-        count++;
       });
-
       $("body").append("<meting-js\n" +
           "        server=\"netease\"\n" +
           "        type=\"playlist\"\n" +
