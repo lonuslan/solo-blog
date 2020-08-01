@@ -1839,37 +1839,37 @@ hr {
 }
 
 //气泡提示
-.popuptext {
-  visibility: hidden;
-  width: 160px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 3px;
-  position: absolute;
-  z-index: 1;
-  //bottom: 110%;
-  //left: 50%;
-  //margin-left: -80px;
-
-  &:after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #555 transparent transparent;
-  }
-}
-
-.poptextshow {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fade_in 1s;
-}
+//.popuptext {
+//  visibility: hidden;
+//  width: 160px;
+//  background-color: #555;
+//  color: #fff;
+//  text-align: center;
+//  border-radius: 6px;
+//  padding: 8px 3px;
+//  position: absolute;
+//  z-index: 1;
+//  //bottom: 110%;
+//  //left: 50%;
+//  //margin-left: -80px;
+//
+//  &:after {
+//    content: "";
+//    position: absolute;
+//    top: 100%;
+//    left: 50%;
+//    margin-left: -5px;
+//    border-width: 5px;
+//    border-style: solid;
+//    border-color: #555 transparent transparent;
+//  }
+//}
+//
+//.poptextshow {
+//  visibility: visible;
+//  -webkit-animation: fadeIn 1s;
+//  animation: fade_in 1s;
+//}
 
 @-webkit-keyframes fadeIn {
   from {
