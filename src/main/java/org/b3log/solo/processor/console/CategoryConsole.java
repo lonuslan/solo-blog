@@ -32,7 +32,7 @@ import org.b3log.solo.service.CategoryMgmtService;
 import org.b3log.solo.service.CategoryQueryService;
 import org.b3log.solo.service.TagQueryService;
 import org.b3log.solo.util.Solos;
-import org.json.JSONArray;
+import org.b3log.solo.util.StatusCodes;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
  * @author <a href="https://hacpai.com/member/lzh984294471">lzh984294471</a>
- * @version 2.0.0.1, Feb 27, 2020
+ * @version 2.0.1.0, Jul 21, 2020
  * @since 2.0.0
  */
 @Singleton
@@ -95,14 +95,13 @@ public class CategoryConsole {
      * Renders the response with a json object, for example,
      * <pre>
      * {
-     *     "sc": boolean,
+     *     "code": int,
      *     "msg": ""
      * }
      * </pre>
      * </p>
      *
      * @param context the specified request context
-     * @throws Exception exception
      */
     public void changeOrder(final RequestContext context) {
         final JsonRenderer renderer = new JsonRenderer();
@@ -115,13 +114,12 @@ public class CategoryConsole {
 
             categoryMgmtService.changeOrder(categoryId, direction);
 
-            ret.put(Keys.STATUS_CODE, true);
+            ret.put(Keys.CODE, StatusCodes.SUCC);
             ret.put(Keys.MSG, langPropsService.get("updateSuccLabel"));
             renderer.setJSONObject(ret);
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
-            final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+            final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
             renderer.setJSONObject(jsonObject);
             jsonObject.put(Keys.MSG, langPropsService.get("updateFailLabel"));
         }
@@ -133,7 +131,7 @@ public class CategoryConsole {
      * Renders the response with a json object, for example,
      * <pre>
      * {
-     *     "sc": boolean,
+     *     "code": int,
      *     "category": {
      *         "oId": "",
      *         "categoryTitle": "",
@@ -145,9 +143,7 @@ public class CategoryConsole {
      * </p>
      *
      * @param context the specified request context
-     * @throws Exception exception
      */
-    @SuppressWarnings("unchecked")
     public void getCategory(final RequestContext context) {
         final JsonRenderer renderer = new JsonRenderer();
         context.setRenderer(renderer);
@@ -155,8 +151,7 @@ public class CategoryConsole {
             final String categoryId = context.pathVar("id");
             final JSONObject result = categoryQueryService.getCategory(categoryId);
             if (null == result) {
-                renderer.setJSONObject(new JSONObject().put(Keys.STATUS_CODE, false));
-
+                renderer.setJSONObject(new JSONObject().put(Keys.CODE, StatusCodes.ERR));
                 return;
             }
 
@@ -168,15 +163,16 @@ public class CategoryConsole {
                 }
                 tagBuilder.append(tag.optString(Tag.TAG_TITLE)).append(",");
             }
-            tagBuilder.deleteCharAt(tagBuilder.length() - 1);
+            if (0 < tagBuilder.length()) {
+                tagBuilder.deleteCharAt(tagBuilder.length() - 1);
+            }
             result.put(Category.CATEGORY_T_TAGS, tagBuilder.toString());
 
             renderer.setJSONObject(result);
-            result.put(Keys.STATUS_CODE, true);
+            result.put(Keys.CODE, StatusCodes.SUCC);
         } catch (final ServiceException e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
-            final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+            final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
             renderer.setJSONObject(jsonObject);
             jsonObject.put(Keys.MSG, langPropsService.get("getFailLabel"));
         }
@@ -188,7 +184,7 @@ public class CategoryConsole {
      * Renders the response with a json object, for example,
      * <pre>
      * {
-     *     "sc": boolean,
+     *     "code": int,
      *     "msg": ""
      * }
      * </pre>
@@ -206,12 +202,11 @@ public class CategoryConsole {
             final String categoryId = context.pathVar("id");
             categoryMgmtService.removeCategory(categoryId);
 
-            jsonObject.put(Keys.STATUS_CODE, true);
+            jsonObject.put(Keys.CODE, StatusCodes.SUCC);
             jsonObject.put(Keys.MSG, langPropsService.get("removeSuccLabel"));
         } catch (final ServiceException e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
-            jsonObject.put(Keys.STATUS_CODE, false);
+            jsonObject.put(Keys.CODE, StatusCodes.ERR);
             jsonObject.put(Keys.MSG, langPropsService.get("removeFailLabel"));
         }
     }
@@ -234,7 +229,7 @@ public class CategoryConsole {
      * Renders the response with a json object, for example,
      * <pre>
      * {
-     *     "sc": boolean,
+     *     "code": int,
      *     "msg": ""
      * }
      * </pre>
@@ -270,10 +265,9 @@ public class CategoryConsole {
                 if (null == tagResult) {
                     addArticleWithTagFirstLabel = addArticleWithTagFirstLabel.replace("{tag}", tagTitle);
 
-                    final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+                    final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
                     renderer.setJSONObject(jsonObject);
                     jsonObject.put(Keys.MSG, addArticleWithTagFirstLabel);
-
                     return;
                 }
 
@@ -289,35 +283,31 @@ public class CategoryConsole {
             final String title = requestJSON.optString(Category.CATEGORY_TITLE, "Category");
             JSONObject mayExist = categoryQueryService.getByTitle(title);
             if (null != mayExist && !mayExist.optString(Keys.OBJECT_ID).equals(categoryId)) {
-                final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+                final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
                 renderer.setJSONObject(jsonObject);
                 jsonObject.put(Keys.MSG, langPropsService.get("duplicatedCategoryLabel"));
-
                 return;
             }
 
             final String uri = requestJSON.optString(Category.CATEGORY_URI);
             if (StringUtils.isBlank(uri) || !uri.equals(URLs.encode(uri))) {
-                final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+                final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
                 renderer.setJSONObject(jsonObject);
                 jsonObject.put(Keys.MSG, langPropsService.get("categoryURIMustBeASCIILabel"));
-
                 return;
             }
 
             mayExist = categoryQueryService.getByURI(uri);
             if (null != mayExist && !mayExist.optString(Keys.OBJECT_ID).equals(categoryId)) {
-                final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+                final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
                 renderer.setJSONObject(jsonObject);
                 jsonObject.put(Keys.MSG, langPropsService.get("duplicatedCategoryURILabel"));
-
                 return;
             }
             if (255 <= StringUtils.length(uri)) {
-                final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+                final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
                 renderer.setJSONObject(jsonObject);
                 jsonObject.put(Keys.MSG, langPropsService.get("categoryURITooLongLabel"));
-
                 return;
             }
 
@@ -342,11 +332,10 @@ public class CategoryConsole {
 
             ret.put(Keys.OBJECT_ID, categoryId);
             ret.put(Keys.MSG, langPropsService.get("updateSuccLabel"));
-            ret.put(Keys.STATUS_CODE, true);
+            ret.put(Keys.CODE, StatusCodes.SUCC);
         } catch (final ServiceException e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
-            final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+            final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
             renderer.setJSONObject(jsonObject);
             jsonObject.put(Keys.MSG, langPropsService.get("updateFailLabel"));
         }
@@ -369,7 +358,7 @@ public class CategoryConsole {
      * Renders the response with a json object, for example,
      * <pre>
      * {
-     *     "sc": boolean,
+     *     "code": int,
      *     "oId": "", // Generated category id
      *     "msg": ""
      * }
@@ -406,10 +395,9 @@ public class CategoryConsole {
                 if (null == tagResult) {
                     addArticleWithTagFirstLabel = addArticleWithTagFirstLabel.replace("{tag}", tagTitle);
 
-                    final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+                    final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
                     renderer.setJSONObject(jsonObject);
                     jsonObject.put(Keys.MSG, addArticleWithTagFirstLabel);
-
                     return;
                 }
 
@@ -424,34 +412,30 @@ public class CategoryConsole {
             final String title = requestJSONObject.optString(Category.CATEGORY_TITLE, "Category");
             JSONObject mayExist = categoryQueryService.getByTitle(title);
             if (null != mayExist) {
-                final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+                final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
                 renderer.setJSONObject(jsonObject);
                 jsonObject.put(Keys.MSG, langPropsService.get("duplicatedCategoryLabel"));
-
                 return;
             }
 
             final String uri = requestJSONObject.optString(Category.CATEGORY_URI);
             if (StringUtils.isBlank(uri) || !uri.equals(URLs.encode(uri))) {
-                final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+                final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
                 renderer.setJSONObject(jsonObject);
                 jsonObject.put(Keys.MSG, langPropsService.get("categoryURIMustBeASCIILabel"));
-
                 return;
             }
             mayExist = categoryQueryService.getByURI(uri);
             if (null != mayExist) {
-                final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+                final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
                 renderer.setJSONObject(jsonObject);
                 jsonObject.put(Keys.MSG, langPropsService.get("duplicatedCategoryURILabel"));
-
                 return;
             }
             if (255 <= StringUtils.length(uri)) {
-                final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+                final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
                 renderer.setJSONObject(jsonObject);
                 jsonObject.put(Keys.MSG, langPropsService.get("categoryURITooLongLabel"));
-
                 return;
             }
 
@@ -474,11 +458,10 @@ public class CategoryConsole {
 
             ret.put(Keys.OBJECT_ID, categoryId);
             ret.put(Keys.MSG, langPropsService.get("addSuccLabel"));
-            ret.put(Keys.STATUS_CODE, true);
+            ret.put(Keys.CODE, StatusCodes.SUCC);
         } catch (final ServiceException e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
-            final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+            final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
             renderer.setJSONObject(jsonObject);
             jsonObject.put(Keys.MSG, langPropsService.get("updateFailLabel"));
         }
@@ -504,7 +487,7 @@ public class CategoryConsole {
      *         "categoryURI": "",
      *         ....
      *      }, ....]
-     *     "sc": true
+     *     "code": 0
      * }
      * </pre>
      * </p>
@@ -520,20 +503,18 @@ public class CategoryConsole {
             final String path = requestURI.substring((Latkes.getContextPath() + "/console/categories/").length());
             final JSONObject requestJSONObject = Solos.buildPaginationRequest(path);
             final JSONObject result = categoryQueryService.getCategoris(requestJSONObject);
-            result.put(Keys.STATUS_CODE, true);
+            result.put(Keys.CODE, StatusCodes.SUCC);
             renderer.setJSONObject(result);
 
-            final JSONArray categories = result.optJSONArray(Category.CATEGORIES);
-            for (int i = 0; i < categories.length(); i++) {
-                final JSONObject category = categories.optJSONObject(i);
+            final List<JSONObject> categories = (List<JSONObject>) result.opt(Category.CATEGORIES);
+            for (final JSONObject category : categories) {
                 String title = category.optString(Category.CATEGORY_TITLE);
                 title = StringEscapeUtils.escapeXml(title);
                 category.put(Category.CATEGORY_TITLE, title);
             }
         } catch (final ServiceException e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
-            final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+            final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
             renderer.setJSONObject(jsonObject);
             jsonObject.put(Keys.MSG, langPropsService.get("getFailLabel"));
         }

@@ -77,7 +77,6 @@ function miniAdmin () {
     './src/main/resources/js/admin/editor.js',
     './src/main/resources/js/admin/tablePaginate.js',
     './src/main/resources/js/admin/article.js',
-    './src/main/resources/js/admin/comment.js',
     './src/main/resources/js/admin/articleList.js',
     './src/main/resources/js/admin/draftList.js',
     './src/main/resources/js/admin/pageList.js',
@@ -89,7 +88,6 @@ function miniAdmin () {
     './src/main/resources/js/admin/pluginList.js',
     './src/main/resources/js/admin/userList.js',
     './src/main/resources/js/admin/categoryList.js',
-    './src/main/resources/js/admin/commentList.js',
     './src/main/resources/js/admin/plugin.js',
     './src/main/resources/js/admin/main.js',
     './src/main/resources/js/admin/about.js']

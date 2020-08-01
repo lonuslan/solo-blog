@@ -19,10 +19,6 @@
         </div>
         <div class="left">
             <span>&copy; ${year}</span> <a href="${servePath}">${blogTitle}</a> ${footerContent}
-            Powered by <a href="https://solo.b3log.org" target="_blank">Solo</a>&nbsp;&nbsp;
-            Theme ${skinDirName}
-            <sup>[<a href="http://themify.me/demo/themes/postline/" target="_blank">ref</a>]</sup>
-            by <a rel="friend" href="http://vanessa.b3log.org" target="_blank">Vanessa</a>.
         </div>
         <div class="right fn-clear">
             <span class="left">
@@ -51,7 +47,6 @@
     Label.moreLabel = "${moreLabel}"
     Label.viewLabel = "${viewLabel}"
     Label.commentLabel = "${commentLabel}"
-    Label.noCommentLabel = "${noCommentLabel}"
     Label.tagLabel = "${tagLabel}"
     Label.topArticleLabel = "${topArticleLabel}"
     Label.authorLabel = "${authorLabel}"

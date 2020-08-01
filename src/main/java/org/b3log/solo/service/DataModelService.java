@@ -52,7 +52,7 @@ import static org.b3log.solo.model.Article.ARTICLE_CONTENT;
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
  * @author <a href="http://vanessa.b3log.org">Liyuan Li</a>
- * @version 1.7.0.16, Mar 31, 2020
+ * @version 1.7.1.2, Jul 8, 2020
  * @since 0.3.1
  */
 @Service
@@ -68,12 +68,6 @@ public class DataModelService {
      */
     @Inject
     private ArticleRepository articleRepository;
-
-    /**
-     * Comment repository.
-     */
-    @Inject
-    private CommentRepository commentRepository;
 
     /**
      * Archive date repository.
@@ -210,7 +204,7 @@ public class DataModelService {
                 }
 
             final JSONObject articlesResult = articleRepository.get(query);
-            final List<JSONObject> articles = CollectionUtils.jsonArrayToList(articlesResult.optJSONArray(Keys.RESULTS));
+            final List<JSONObject> articles = (List<JSONObject>) articlesResult.opt(Keys.RESULTS);
             final int pageCount = articlesResult.optJSONObject(Pagination.PAGINATION).optInt(Pagination.PAGINATION_PAGE_COUNT);
             setArticlesExProperties(context, articles, preference);
 
@@ -495,11 +489,10 @@ public class DataModelService {
         final Map<String, String> customVars = new HashMap<>();
         final String customVarsStr = preference.optString(Option.ID_C_CUSTOM_VARS);
         final String[] customVarsArray = customVarsStr.split("\\|");
-        for (int i = 0; i < customVarsArray.length; i++) {
-            final String customVarPair = customVarsArray[i];
+        for (final String customVarPair : customVarsArray) {
             if (StringUtils.isNotBlank(customVarsStr)) {
-                final String customVarKey = customVarPair.split("=")[0];
-                final String customVarVal = customVarPair.split("=")[1];
+                final String customVarKey = StringUtils.substringBefore(customVarPair, "=");
+                final String customVarVal = StringUtils.substringAfter(customVarPair, "=");
                 if (StringUtils.isNotBlank(customVarKey) && StringUtils.isNotBlank(customVarVal)) {
                     customVars.put(customVarKey, customVarVal);
                 }
@@ -520,7 +513,11 @@ public class DataModelService {
         }
         dataModel.put(Option.ID_C_SHOW_CODE_BLOCK_LN, showCodeBlockLn);
 
-        dataModel.put(Common.COMMENTABLE, preference.optBoolean(Option.ID_C_COMMENTABLE));
+        String speech = preference.optString(Option.ID_C_SPEECH);
+        if (StringUtils.isBlank(speech)) {
+            speech = "true";
+        }
+        dataModel.put(Option.ID_C_SPEECH, Boolean.parseBoolean(speech));
 
         dataModel.put("staticSite", Solos.GEN_STATIC_SITE);
         if (!Solos.GEN_STATIC_SITE) {
@@ -629,7 +626,7 @@ public class DataModelService {
             dataModel.put(User.USERS, userList);
             final JSONObject admin = userRepository.getAdmin();
             dataModel.put(Common.ADMIN_USER, admin);
-            final String skinDirName = (String) context.attr(Keys.TEMAPLTE_DIR_NAME);
+            final String skinDirName = (String) context.attr(Keys.TEMPLATE_DIR_NAME);
             dataModel.put(Option.ID_C_SKIN_DIR_NAME, skinDirName);
             Keys.fillRuntime(dataModel);
             fillPageNavigations(dataModel);

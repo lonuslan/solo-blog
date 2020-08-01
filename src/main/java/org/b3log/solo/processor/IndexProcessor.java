@@ -11,17 +11,21 @@
  */
 package org.b3log.solo.processor;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import jodd.http.HttpRequest;
+import jodd.http.HttpResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tika.io.IOUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.http.Cookie;
 import org.b3log.latke.http.Request;
 import org.b3log.latke.http.RequestContext;
-import org.b3log.latke.http.Response;
 import org.b3log.latke.http.renderer.AbstractFreeMarkerRenderer;
+import org.b3log.latke.http.renderer.BinaryRenderer;
 import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.model.Pagination;
@@ -40,8 +44,10 @@ import org.b3log.solo.util.Skins;
 import org.b3log.solo.util.Solos;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Index processor.
@@ -49,7 +55,7 @@ import java.util.Map;
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
  * @author <a href="https://hacpai.com/member/DASHU">DASHU</a>
  * @author <a href="http://vanessa.b3log.org">Vanessa</a>
- * @version 2.0.0.1, Apr 18, 2020
+ * @version 2.0.0.4, Jun 25, 2020
  * @since 0.3.1
  */
 @Singleton
@@ -88,39 +94,15 @@ public class IndexProcessor {
      * Shows index with the specified context.
      *
      * @param context the specified context
-     * @throws Exception exception
      */
     public void showIndex(final RequestContext context) {
         final Request request = context.getRequest();
-        final Response response = context.getResponse();
         final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "index.ftl");
         final Map<String, Object> dataModel = renderer.getDataModel();
         try {
             final int currentPageNum = Paginator.getPage(request);
             final JSONObject preference = optionQueryService.getPreference();
-
-            // 前台皮肤切换 https://github.com/b3log/solo/issues/12060
-            String specifiedSkin = Skins.getSkinDirName(context);
-            if (StringUtils.isBlank(specifiedSkin)) {
-                final JSONObject skinOpt = optionQueryService.getSkin();
-                specifiedSkin = Solos.isMobile(request) ?
-
-                        skinOpt.optString(Option.ID_C_MOBILE_SKIN_DIR_NAME) :
-                        skinOpt.optString(Option.ID_C_SKIN_DIR_NAME);
-            }
-            request.setAttribute(Keys.TEMAPLTE_DIR_NAME, specifiedSkin);
-
-            Cookie cookie;
-            if (!Solos.isMobile(request)) {
-                cookie = new Cookie(Common.COOKIE_NAME_SKIN, specifiedSkin);
-            } else {
-                cookie = new Cookie(Common.COOKIE_NAME_MOBILE_SKIN, specifiedSkin);
-            }
-            cookie.setMaxAge(60 * 60); // 1 hour
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            Skins.fillLangs(preference.optString(Option.ID_C_LOCALE_STRING), (String) context.attr(Keys.TEMAPLTE_DIR_NAME), dataModel);
+            Skins.fillLangs(preference.optString(Option.ID_C_LOCALE_STRING), (String) context.attr(Keys.TEMPLATE_DIR_NAME), dataModel);
 
             dataModelService.fillIndexArticles(context, dataModel, currentPageNum, preference);
             dataModelService.fillCommon(context, dataModel, preference);
@@ -130,16 +112,64 @@ public class IndexProcessor {
             dataModel.put(Pagination.PAGINATION_CURRENT_PAGE_NUM, currentPageNum);
             final int previousPageNum = currentPageNum > 1 ? currentPageNum - 1 : 0;
             dataModel.put(Pagination.PAGINATION_PREVIOUS_PAGE_NUM, previousPageNum);
-
             final Integer pageCount = (Integer) dataModel.get(Pagination.PAGINATION_PAGE_COUNT);
             final int nextPageNum = currentPageNum + 1 > pageCount ? pageCount : currentPageNum + 1;
             dataModel.put(Pagination.PAGINATION_NEXT_PAGE_NUM, nextPageNum);
             dataModel.put(Common.PATH, "");
         } catch (final ServiceException e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
             context.sendError(404);
         }
+    }
+
+    /**
+     * Favicon bytes cache. &lt;"/favicon.ico", bytes&gt;
+     */
+    private static final Cache<String, Object> FAVICON_CACHE = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
+
+    /**
+     * Shows favicon with the specified context.
+     *
+     * @param context the specified context
+     */
+    public void showFavicon(final RequestContext context) {
+        final BinaryRenderer binaryRenderer = new BinaryRenderer("image/x-icon");
+        context.setRenderer(binaryRenderer);
+        final String key = "/favicon.ico";
+        byte[] bytes = (byte[]) FAVICON_CACHE.getIfPresent(key);
+        if (null != bytes) {
+            binaryRenderer.setData(bytes);
+            return;
+        }
+
+        final JSONObject preference = optionQueryService.getPreference();
+        String faviconURL;
+        if (null == preference) {
+            faviconURL = Option.DefaultPreference.DEFAULT_FAVICON_URL;
+        } else {
+            faviconURL = preference.optString(Option.ID_C_FAVICON_URL);
+        }
+
+        try {
+            final HttpResponse response = HttpRequest.get(faviconURL).header("User-Agent", Solos.USER_AGENT).connectionTimeout(3000).timeout(7000).send();
+            if (200 == response.statusCode()) {
+                bytes = response.bodyBytes();
+            } else {
+                throw new Exception();
+            }
+            binaryRenderer.setData(bytes);
+        } catch (final Exception e) {
+            try (final InputStream resourceAsStream = IndexProcessor.class.getResourceAsStream("/images/favicon.ico")) {
+                bytes = IOUtils.toByteArray(resourceAsStream);
+                binaryRenderer.setData(bytes);
+            } catch (final Exception ex) {
+                LOGGER.log(Level.ERROR, "Loads default favicon.ico failed", e);
+                context.sendError(500);
+                return;
+            }
+        }
+
+        FAVICON_CACHE.put(key, bytes);
     }
 
     /**
@@ -150,7 +180,6 @@ public class IndexProcessor {
     public void showStart(final RequestContext context) {
         if (initService.isInited() && null != Solos.getCurrentUser(context)) {
             context.sendRedirect(Latkes.getServePath());
-
             return;
         }
 
@@ -184,9 +213,7 @@ public class IndexProcessor {
      */
     public void logout(final RequestContext context) {
         final Request request = context.getRequest();
-
         Solos.logout(request, context.getResponse());
-
         Solos.addGoogleNoIndex(context);
         context.sendRedirect(Latkes.getServePath());
     }
@@ -211,7 +238,6 @@ public class IndexProcessor {
             Keys.fillRuntime(dataModel);
         } catch (final ServiceException e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
             context.sendError(404);
         }
     }

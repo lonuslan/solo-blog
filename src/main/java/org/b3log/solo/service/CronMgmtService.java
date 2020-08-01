@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * Cron management service.
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
- * @version 1.0.0.4, Apr 18, 2019
+ * @version 1.0.0.6, Jun 28, 2020
  * @since 2.9.7
  */
 @Service
@@ -93,6 +93,7 @@ public class CronMgmtService {
         SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
             try {
                 Solos.reloadBlacklistIPs();
+                articleMgmtService.updateArticlesRandomValue(20);
             } catch (final Exception e) {
                 LOGGER.log(Level.ERROR, "Executes cron failed", e);
             } finally {
@@ -106,6 +107,7 @@ public class CronMgmtService {
                 articleMgmtService.refreshGitHub();
                 userMgmtService.refreshUSite();
                 exportService.exportHacPai();
+                exportService.exportGitHub();
             } catch (final Exception e) {
                 LOGGER.log(Level.ERROR, "Executes cron failed", e);
             } finally {

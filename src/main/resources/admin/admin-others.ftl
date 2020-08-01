@@ -24,6 +24,11 @@
             </div>
         </li>
         <li>
+            <div id="tabOthers_import-data">
+                <a href="#tools/others/import-data">${importDataLabel}</a>
+            </div>
+        </li>
+        <li>
             <div id="tabOthers_log">
                 <a href="#tools/others/log">${viewLogLabel}</a>
             </div>
@@ -33,14 +38,19 @@
 <div id="tabOthersPanel" class="sub-tabs-main">
     <div id="tabOthersPanel_tag" class="fn__none">
         <button class="fn__margin12" onclick="admin.others.removeUnusedTags();">${removeUnusedTagsLabel}</button>
-        <button class="fn__margin12" onclick="admin.others.removeUnusedArchives();">${removeUnusedArchivesLabel}</button>
+        <button class="fn__margin12"
+                onclick="admin.others.removeUnusedArchives();">${removeUnusedArchivesLabel}</button>
     </div>
     <div id="tabOthersPanel_data" class="fn__none">
         <#if supportExport>
-        <button class="fn__margin12" onclick="admin.others.exportSQL();">${exportSQLLabel}</button>
+            <button class="fn__margin12" onclick="admin.others.exportSQL();">${exportSQLLabel}</button>
         </#if>
         <button class="fn__margin12" onclick="admin.others.exportJSON();">${exportJSONLabel}</button>
         <button class="fn__margin12" onclick="admin.others.exportHexo();">${exportHexoLabel}</button>
+    </div>
+    <div id="tabOthersPanel_import-data" class="fn__none">
+        <input id="otherImportFileInput" type="file" name="file">
+        <button onclick="admin.others.importZip()">${importLabel}</button>
     </div>
     <div id="tabOthersPanel_log" class="fn__none form">
         <textarea rows="32" readonly></textarea>

@@ -46,7 +46,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Solo utilities.
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
- * @version 1.10.0.0, Jan 11, 2020
+ * @version 1.11.0.0, Jun 10, 2020
  * @since 2.8.0
  */
 public final class Solos {
@@ -109,6 +109,38 @@ public final class Solos {
             cookieSecret = RandomStringUtils.randomAlphanumeric(8);
         }
         COOKIE_SECRET = cookieSecret;
+    }
+
+    /**
+     * Gets community user info.
+     *
+     * @param accessToken the specified access token
+     * @return community user info, for example, <pre>
+     * {
+     *   "userId": "",
+     *   "userName": "D",
+     *   "userAvatar": ""
+     * }
+     * </pre>, returns {@code null} if not found QQ user info
+     */
+    public static JSONObject getUserInfo(final String accessToken) {
+        try {
+            final HttpResponse res = HttpRequest.post("https://hacpai.com/user/ak").
+                    form("access_token", accessToken).trustAllCerts(true).
+                    connectionTimeout(3000).timeout(7000).header("User-Agent", Solos.USER_AGENT).send();
+            if (200 != res.statusCode()) {
+                return null;
+            }
+            res.charset("UTF-8");
+            final JSONObject result = new JSONObject(res.bodyText());
+            if (0 != result.optInt(Keys.CODE)) {
+                return null;
+            }
+            return result.optJSONObject(Common.DATA);
+        } catch (final Exception e) {
+            LOGGER.log(Level.ERROR, "Gets community user info failed", e);
+            return null;
+        }
     }
 
     /**
@@ -220,7 +252,6 @@ public final class Solos {
             if (0 != result.optInt(Keys.CODE)) {
                 uploadMsg = result.optString(Keys.MSG);
                 LOGGER.log(Level.ERROR, uploadMsg);
-
                 return null;
             }
 
@@ -229,14 +260,12 @@ public final class Solos {
             uploadToken = data.optString("uploadToken");
             uploadURL = data.optString("uploadURL");
             uploadMsg = "";
-
             return new JSONObject().
                     put(Common.UPLOAD_TOKEN, uploadToken).
                     put(Common.UPLOAD_URL, uploadURL).
                     put(Common.UPLOAD_MSG, uploadMsg);
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, "Gets upload token failed", e);
-
             return null;
         }
     }

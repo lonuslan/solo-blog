@@ -14,7 +14,7 @@
 *
 * @author <a href="http://vanessa.b3log.org">Liyuan Li</a>
 * @author <a href="http://88250.b3log.org">Liang Ding</a>
-* @version 3.3.0.2, Feb 9, 2020
+* @version 3.4.1.0, Jun 19, 2020
 */
 @import "reset";
 @import "function";
@@ -420,12 +420,12 @@ a[class*=" icon-"]:hover {
 .form label {
   margin-bottom: 10px;
   display: inline-block;
+  line-height: 20px;
 }
 
 .form label.checkbox {
   display: inline-flex;
   align-items: center;
-  margin: 11px 0;
 }
 
 .form label.checkbox input {
@@ -563,6 +563,10 @@ button#submitArticle {
 button#submitArticle:hover {
   background-color: #ec6459;
   border-color: #ec6459;
+}
+
+.article-commentable__panel label {
+  margin-bottom: 0;
 }
 
 /* end article */
@@ -960,6 +964,10 @@ button#submitArticle:hover {
   border-radius: 0 0 3px 3px;
 }
 
+.solo-kanbanniang {
+  z-index: 1;
+}
+
 @media (max-width: 768px) {
   #top > a {
     display: none;
@@ -1008,8 +1016,7 @@ button#submitArticle:hover {
     margin-bottom: 10px !important;
   }
 
-  .viewpwd__panel,
-  .article-commentable__panel {
+  .viewpwd__panel {
     float: none;
   }
 

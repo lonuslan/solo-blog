@@ -29,13 +29,14 @@ import org.b3log.solo.service.InitService;
 import org.b3log.solo.service.OptionQueryService;
 import org.b3log.solo.service.PermalinkQueryService;
 import org.b3log.solo.util.Solos;
+import org.b3log.solo.util.Statics;
 import org.json.JSONObject;
 
 /**
  * Article permalink  handler.
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
- * @version 1.0.0.4, Jan 12, 2020
+ * @version 1.0.0.5, May 23, 2020
  * @since 3.2.0
  */
 public class PermalinkHandler implements Handler {
@@ -59,7 +60,6 @@ public class PermalinkHandler implements Handler {
             final InitService initService = beanManager.getReference(InitService.class);
             if (!initService.isInited()) {
                 context.handle();
-
                 return;
             }
 
@@ -69,7 +69,15 @@ public class PermalinkHandler implements Handler {
             if (PermalinkQueryService.invalidPermalinkFormat(permalink)) {
                 LOGGER.log(Level.DEBUG, "Skip permalink handling request [URI={}]", permalink);
                 context.handle();
+                return;
+            }
 
+            // 尝试走静态化缓存
+            final String html = Statics.get(context);
+            if (StringUtils.isNotBlank(html)) {
+                context.getResponse().setContentType("text/html; charset=utf-8");
+                context.sendString(html);
+                context.abort();
                 return;
             }
 
@@ -78,13 +86,11 @@ public class PermalinkHandler implements Handler {
             if (null == article) {
                 LOGGER.log(Level.DEBUG, "Not found article with permalink [{}]", permalink);
                 context.handle();
-
                 return;
             }
         } catch (final RepositoryException e) {
             LOGGER.log(Level.ERROR, "Processes article permalink handler failed", e);
             context.sendError(404);
-
             return;
         }
 
@@ -92,11 +98,9 @@ public class PermalinkHandler implements Handler {
         if (Solos.needViewPwd(context, article)) {
             try {
                 context.sendRedirect(Latkes.getServePath() + "/console/article-pwd?articleId=" + article.optString(Keys.OBJECT_ID));
-
                 return;
             } catch (final Exception e) {
                 context.sendError(404);
-
                 return;
             }
         }
@@ -106,7 +110,6 @@ public class PermalinkHandler implements Handler {
         final boolean allowVisitDraftViaPermalink = preference.getBoolean(Option.ID_C_ALLOW_VISIT_DRAFT_VIA_PERMALINK);
         if (Article.ARTICLE_STATUS_C_PUBLISHED != article.optInt(Article.ARTICLE_STATUS) && !allowVisitDraftViaPermalink) {
             context.sendError(404);
-
             return;
         }
 

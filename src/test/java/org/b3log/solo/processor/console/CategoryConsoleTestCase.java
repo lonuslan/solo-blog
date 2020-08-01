@@ -34,10 +34,8 @@ public class CategoryConsoleTestCase extends AbstractTestCase {
 
     /**
      * addCategory.
-     *
-     * @throws Exception exception
      */
-    public void addCategory() throws Exception {
+    public void addCategory() {
         final MockRequest request = mockRequest();
         request.setRequestURI("/console/category/");
         request.setMethod("POST");
@@ -52,7 +50,7 @@ public class CategoryConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
     }
 
     /**
@@ -74,7 +72,7 @@ public class CategoryConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
     }
 
     /**
@@ -101,7 +99,7 @@ public class CategoryConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
 
         category = getCategoryQueryService().getByTitle("分类1");
         Assert.assertNull(category);
@@ -113,11 +111,9 @@ public class CategoryConsoleTestCase extends AbstractTestCase {
 
     /**
      * getCategories.
-     *
-     * @throws Exception exception
      */
     @Test(dependsOnMethods = "updateCategory")
-    public void getCategories() throws Exception {
+    public void getCategories() {
         final MockRequest request = mockRequest();
         request.setRequestURI("/console/categories/1/10/20");
         request.setMethod("GET");
@@ -128,7 +124,7 @@ public class CategoryConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
     }
 
     /**
@@ -154,7 +150,7 @@ public class CategoryConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
     }
 
     /**
@@ -176,6 +172,6 @@ public class CategoryConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
     }
 }

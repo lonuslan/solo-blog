@@ -12,6 +12,7 @@
 package org.b3log.solo.processor.console;
 
 import jodd.io.ZipUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -22,6 +23,8 @@ import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.event.Event;
 import org.b3log.latke.event.EventManager;
+import org.b3log.latke.http.FileUpload;
+import org.b3log.latke.http.Request;
 import org.b3log.latke.http.RequestContext;
 import org.b3log.latke.http.Response;
 import org.b3log.latke.http.renderer.AbstractFreeMarkerRenderer;
@@ -35,12 +38,10 @@ import org.b3log.solo.Server;
 import org.b3log.solo.model.Common;
 import org.b3log.solo.model.Option;
 import org.b3log.solo.model.UserExt;
-import org.b3log.solo.service.DataModelService;
-import org.b3log.solo.service.ExportService;
-import org.b3log.solo.service.OptionQueryService;
-import org.b3log.solo.service.UserQueryService;
+import org.b3log.solo.service.*;
 import org.b3log.solo.util.Markdowns;
 import org.b3log.solo.util.Solos;
+import org.b3log.solo.util.StatusCodes;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -54,7 +55,7 @@ import java.util.*;
  * Admin console render processing.
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
- * @version 2.0.0.0, Feb 9, 2020
+ * @version 2.0.0.1, May 21, 2020
  * @since 0.4.1
  */
 @Singleton
@@ -100,6 +101,12 @@ public class AdminConsole {
      */
     @Inject
     private EventManager eventManager;
+
+    /**
+     * Import service.
+     */
+    @Inject
+    private ImportService importService;
 
     /**
      * Shows administrator index with the specified context.
@@ -221,6 +228,55 @@ public class AdminConsole {
     }
 
     /**
+     * Imports markdown zip.
+     *
+     * @param context the specified context
+     */
+    public void importMarkdownZip(final RequestContext context) {
+        context.renderJSON(StatusCodes.ERR);
+        final Request request = context.getRequest();
+        final FileUpload file = request.getFileUpload("file");
+        if (null == file) {
+            context.renderMsg(langPropsService.get("allowZipOnlyLabel"));
+            return;
+        }
+        final String fileName = file.getFilename();
+        String suffix = StringUtils.substringAfterLast(fileName, ".");
+        if (!StringUtils.equalsIgnoreCase(suffix, "zip")) {
+            context.renderMsg(langPropsService.get("allowZipOnlyLabel"));
+            return;
+        }
+
+        try {
+            final byte[] bytes = file.getData();
+            final String tmpDir = System.getProperty("java.io.tmpdir");
+            final String date = DateFormatUtils.format(new Date(), "yyyyMMddHHmmss");
+            final String zipPath = tmpDir + File.separator + "solo-import-" + date + ".zip";
+            final File zipFile = new File(zipPath);
+            FileUtils.writeByteArrayToFile(zipFile, bytes);
+            final String unzipPath = tmpDir + File.separator + "solo-import-" + date;
+            final File unzipDir = new File(unzipPath);
+            ZipUtil.unzip(zipFile, unzipDir);
+            final JSONObject result = importService.importMarkdownDir(unzipDir);
+            final int succCount = result.optInt("succCount");
+            final int failCount = result.optInt("failCount");
+            FileUtils.deleteQuietly(zipFile);
+            FileUtils.deleteQuietly(unzipDir);
+            context.renderJSONValue(Keys.CODE, StatusCodes.SUCC);
+            String msg = langPropsService.get("importSuccLabel");
+            msg = msg.replace("${succCount}", succCount + "");
+            if (0 < failCount) {
+                msg = langPropsService.get("importFailLabel");
+                msg = msg.replace("${failCount}", failCount + "");
+            }
+            context.renderMsg(msg);
+        } catch (final Exception e) {
+            LOGGER.log(Level.ERROR, "Imports markdown file failed", e);
+            context.renderMsg(langPropsService.get("importFailedSeeLogLabel"));
+        }
+    }
+
+    /**
      * Exports data as SQL zip file.
      *
      * @param context the specified request context
@@ -230,7 +286,6 @@ public class AdminConsole {
 
         if (!Solos.isAdminLoggedIn(context)) {
             context.sendError(401);
-
             return;
         }
 
@@ -243,7 +298,6 @@ public class AdminConsole {
         final byte[] zipData = exportService.exportSQL();
         if (null == zipData) {
             context.sendError(500);
-
             return;
         }
 
@@ -263,7 +317,6 @@ public class AdminConsole {
         final Response response = context.getResponse();
         if (!Solos.isAdminLoggedIn(context)) {
             context.sendError(401);
-
             return;
         }
 
@@ -296,9 +349,7 @@ public class AdminConsole {
             }
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, "Export failed", e);
-            context.renderJSON().renderMsg("Export failed, please check log");
-
-            return;
+            context.renderJSON(StatusCodes.ERR).renderMsg("Export failed, please check log");
         }
     }
 
@@ -311,7 +362,6 @@ public class AdminConsole {
         final Response response = context.getResponse();
         if (!Solos.isAdminLoggedIn(context)) {
             context.sendError(401);
-
             return;
         }
 
@@ -362,9 +412,7 @@ public class AdminConsole {
             response.sendBytes(zipData);
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, "Export failed", e);
-            context.renderJSON().renderMsg("Export failed, please check log");
-
-            return;
+            context.renderJSON(StatusCodes.ERR).renderMsg("Export failed, please check log");
         }
     }
 

@@ -48,7 +48,7 @@ import static org.b3log.solo.model.Article.*;
  * Article management service.
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
- * @version 1.3.4.1, Jan 8, 2020
+ * @version 1.3.4.2, Jul 8, 2020
  * @since 0.3.5
  */
 @Service
@@ -106,12 +106,6 @@ public class ArticleMgmtService {
      */
     @Inject
     private TagArticleRepository tagArticleRepository;
-
-    /**
-     * Comment repository.
-     */
-    @Inject
-    private CommentRepository commentRepository;
 
     /**
      * Category-tag repository.
@@ -219,7 +213,6 @@ public class ArticleMgmtService {
             optionMgmtService.addOrUpdateOption(githubReposOpt);
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, "Updates github repos option failed", e);
-
             return;
         }
 
@@ -259,10 +252,8 @@ public class ArticleMgmtService {
                 article.put(Article.ARTICLE_AUTHOR_ID, admin.optString(Keys.OBJECT_ID));
                 article.put(Article.ARTICLE_TITLE, "我在 GitHub 上的开源项目");
                 article.put(Article.ARTICLE_ABSTRACT, Article.getAbstractText(content));
-                article.put(Article.ARTICLE_COMMENT_COUNT, 0);
                 article.put(Article.ARTICLE_TAGS_REF, "开源,GitHub");
                 article.put(Article.ARTICLE_PERMALINK, permalink);
-                article.put(Article.ARTICLE_COMMENTABLE, true);
                 article.put(Article.ARTICLE_CONTENT, content);
                 article.put(Article.ARTICLE_VIEW_PWD, "");
                 article.put(Article.ARTICLE_STATUS, Article.ARTICLE_STATUS_C_PUBLISHED);
@@ -315,27 +306,11 @@ public class ArticleMgmtService {
             }
 
             article.put(Common.POST_TO_COMMUNITY, true);
-
             final JSONObject data = new JSONObject().put(ARTICLE, article);
             B3ArticleSender.pushArticleToRhy(data);
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, "Pushes an article [id=" + articleId + "] to HacPai failed", e);
         }
-    }
-
-    /**
-     * Article comment count +1 for an article specified by the given article id.
-     *
-     * @param articleId the given article id
-     * @throws JSONException       json exception
-     * @throws RepositoryException repository exception
-     */
-    public void incArticleCommentCount(final String articleId) throws JSONException, RepositoryException {
-        final JSONObject article = articleRepository.get(articleId);
-        final JSONObject newArticle = new JSONObject(article, JSONObject.getNames(article));
-        final int commentCnt = article.getInt(Article.ARTICLE_COMMENT_COUNT);
-        newArticle.put(Article.ARTICLE_COMMENT_COUNT, commentCnt + 1);
-        articleRepository.update(articleId, newArticle, ARTICLE_COMMENT_COUNT);
     }
 
     /**
@@ -359,7 +334,6 @@ public class ArticleMgmtService {
             }
 
             LOGGER.log(Level.ERROR, "Cancels publish article failed", e);
-
             throw new ServiceException(e);
         }
     }
@@ -405,7 +379,6 @@ public class ArticleMgmtService {
      *                          "articlePermalink": "", // optional
      *                          "articleStatus": int, // 0: published, 1: draft
      *                          "articleSignId": "", // optional
-     *                          "articleCommentable": boolean,
      *                          "articleViewPwd": ""
      *                          }
      *                          }
@@ -432,11 +405,6 @@ public class ArticleMgmtService {
             processTagsForArticleUpdate(oldArticle, article);
 
             archiveDate(article);
-
-            if (!oldArticle.getString(Article.ARTICLE_PERMALINK).equals(permalink)) { // The permalink has been updated
-                // Updates related comments' links
-                processCommentsForArticleUpdate(article);
-            }
 
             // Fill auto properties
             fillAutoProperties(oldArticle, article);
@@ -480,7 +448,6 @@ public class ArticleMgmtService {
             }
 
             LOGGER.log(Level.ERROR, "Updates an article failed", e);
-
             throw e;
         } catch (final Exception e) {
             if (transaction.isActive()) {
@@ -488,7 +455,6 @@ public class ArticleMgmtService {
             }
 
             LOGGER.log(Level.ERROR, "Updates an article failed", e);
-
             throw new ServiceException(e.getMessage());
         }
     }
@@ -508,8 +474,6 @@ public class ArticleMgmtService {
      *                          "articlePermalink": "", // optional
      *                          "postToCommunity": boolean, // optional
      *                          "articleSignId": "" // optional, default is "0",
-     *                          "articleCommentable": boolean,
-     *                          "articleCommentCount": int, // optional, default is 0
      *                          "articleViewPwd": "",
      *                          "oId": "" // optional, generate it if not exists this key
      *                          }
@@ -537,8 +501,6 @@ public class ArticleMgmtService {
             final String[] tagTitles = tagsString.split(",");
             final JSONArray tags = tag(tagTitles, article);
 
-            article.put(Article.ARTICLE_COMMENT_COUNT, article.optInt(Article.ARTICLE_COMMENT_COUNT));
-            article.put(Article.ARTICLE_VIEW_COUNT, 0);
             if (!article.has(Article.ARTICLE_CREATED)) {
                 article.put(Article.ARTICLE_CREATED, System.currentTimeMillis());
             }
@@ -599,7 +561,6 @@ public class ArticleMgmtService {
             unArchiveDate(articleId);
             removeTagArticleRelations(articleId);
             articleRepository.remove(articleId);
-            commentRepository.removeComments(articleId);
             transaction.commit();
 
             Statics.clear();
@@ -622,24 +583,18 @@ public class ArticleMgmtService {
      */
     public void updateArticlesRandomValue(final int updateCnt) throws ServiceException {
         final Transaction transaction = articleRepository.beginTransaction();
-
         try {
             final List<JSONObject> randomArticles = articleRepository.getRandomly(updateCnt);
-
             for (final JSONObject article : randomArticles) {
                 article.put(Article.ARTICLE_RANDOM_DOUBLE, Math.random());
-
                 articleRepository.update(article.getString(Keys.OBJECT_ID), article, ARTICLE_RANDOM_DOUBLE);
             }
-
             transaction.commit();
         } catch (final Exception e) {
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-
             LOGGER.log(Level.WARN, "Updates article random value failed");
-
             throw new ServiceException(e);
         }
     }
@@ -663,37 +618,10 @@ public class ArticleMgmtService {
             if (1 > publishedArticleCount) {
                 archiveDateRepository.remove(archiveDateId);
             }
-
             archiveDateArticleRepository.remove(archiveDateArticleRelation.getString(Keys.OBJECT_ID));
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, "Unarchive date for article[id=" + articleId + "] failed", e);
-
             throw new ServiceException(e);
-        }
-    }
-
-    /**
-     * Processes comments for article update.
-     *
-     * @param article the specified article to update
-     * @throws Exception exception
-     */
-    private void processCommentsForArticleUpdate(final JSONObject article) throws Exception {
-        final String articleId = article.getString(Keys.OBJECT_ID);
-
-        final List<JSONObject> comments = commentRepository.getComments(articleId, 1, Integer.MAX_VALUE);
-        for (final JSONObject comment : comments) {
-            final String commentId = comment.getString(Keys.OBJECT_ID);
-            final String sharpURL = Comment.getCommentSharpURLForArticle(article, commentId);
-            comment.put(Comment.COMMENT_SHARP_URL, sharpURL);
-            if (StringUtils.isBlank(comment.optString(Comment.COMMENT_ORIGINAL_COMMENT_ID))) {
-                comment.put(Comment.COMMENT_ORIGINAL_COMMENT_ID, "");
-            }
-            if (StringUtils.isBlank(comment.optString(Comment.COMMENT_ORIGINAL_COMMENT_NAME))) {
-                comment.put(Comment.COMMENT_ORIGINAL_COMMENT_NAME, "");
-            }
-
-            commentRepository.update(commentId, comment);
         }
     }
 
@@ -717,10 +645,9 @@ public class ArticleMgmtService {
         String[] tagStrings = tagsString.split(",");
         final List<JSONObject> newTags = new ArrayList<>();
 
-        for (int i = 0; i < tagStrings.length; i++) {
-            final String tagTitle = tagStrings[i].trim();
+        for (final String tagString : tagStrings) {
+            final String tagTitle = tagString.trim();
             JSONObject newTag = tagRepository.getByTitle(tagTitle);
-
             if (null == newTag) {
                 newTag = new JSONObject();
                 newTag.put(Tag.TAG_TITLE, tagTitle);
@@ -823,10 +750,8 @@ public class ArticleMgmtService {
         for (int i = 0; i < tags.length(); i++) {
             final JSONObject tag = tags.optJSONObject(i);
             final JSONObject tagArticleRelation = new JSONObject();
-
             tagArticleRelation.put(Tag.TAG + "_" + Keys.OBJECT_ID, tag.optString(Keys.OBJECT_ID));
             tagArticleRelation.put(Article.ARTICLE + "_" + Keys.OBJECT_ID, article.optString(Keys.OBJECT_ID));
-
             tagArticleRepository.add(tagArticleRelation);
         }
     }
@@ -866,7 +791,6 @@ public class ArticleMgmtService {
 
             ret.put(tag);
         }
-
         return ret;
     }
 
@@ -927,8 +851,6 @@ public class ArticleMgmtService {
     private void fillAutoProperties(final JSONObject oldArticle, final JSONObject article) throws JSONException {
         final long created = oldArticle.getLong(ARTICLE_CREATED);
         article.put(ARTICLE_CREATED, created);
-        article.put(ARTICLE_COMMENT_COUNT, oldArticle.getInt(ARTICLE_COMMENT_COUNT));
-        article.put(ARTICLE_VIEW_COUNT, oldArticle.getInt(ARTICLE_VIEW_COUNT));
         article.put(ARTICLE_PUT_TOP, oldArticle.getBoolean(ARTICLE_PUT_TOP));
         article.put(ARTICLE_AUTHOR_ID, oldArticle.getString(ARTICLE_AUTHOR_ID));
         article.put(ARTICLE_RANDOM_DOUBLE, Math.random());
@@ -996,7 +918,6 @@ public class ArticleMgmtService {
                 throw new ServiceException(langPropsService.get("duplicatedPermalinkLabel"));
             }
         }
-
         return ret.replaceAll(" ", "-");
     }
 
@@ -1014,7 +935,6 @@ public class ArticleMgmtService {
                 return true;
             }
         }
-
         return false;
     }
 }

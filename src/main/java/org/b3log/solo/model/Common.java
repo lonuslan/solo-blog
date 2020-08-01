@@ -16,20 +16,10 @@ package org.b3log.solo.model;
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
  * @author <a href="https://hacpai.com/member/e">Dongxu Wang</a>
- * @version 1.7.0.8, Jan 18, 2020
+ * @version 1.7.0.10, Jul 8, 2020
  * @since 0.3.1
  */
 public final class Common {
-
-    /**
-     * Key of skin cookie name.
-     */
-    public static final String COOKIE_NAME_SKIN = "skin";
-
-    /**
-     * Key of mobile skin cookie name.
-     */
-    public static final String COOKIE_NAME_MOBILE_SKIN = "mobile-skin";
 
     /**
      * Key of favicon URL.
@@ -197,11 +187,6 @@ public final class Common {
     public static final String AUTHOR_ROLE = "authorRole";
 
     /**
-     * Key of current user.
-     */
-    public static final String CURRENT_USER = "currentUser";
-
-    /**
      * Key of admin user.
      */
     public static final String ADMIN_USER = "adminUser";
@@ -257,11 +242,6 @@ public final class Common {
     public static final String MONTH_NAME = "monthName";
 
     /**
-     * Key of comment title (article/page).
-     */
-    public static final String COMMENT_TITLE = "commentTitle";
-
-    /**
      * /admin-index.do#main.
      */
     public static final String ADMIN_INDEX_URI = "/admin-index.do#main";
@@ -272,24 +252,9 @@ public final class Common {
     public static final String TYPE = "type";
 
     /**
-     * Article comment type.
-     */
-    public static final String ARTICLE_COMMENT_TYPE = "articleComment";
-
-    /**
-     * Page comment type.
-     */
-    public static final String PAGE_COMMENT_TYPE = "pageComment";
-
-    /**
      * Key of top bar replacement flag.
      */
     public static final String TOP_BAR = "topBarReplacement";
-
-    /**
-     * Key of unused tags.
-     */
-    public static final String UNUSED_TAGS = "unusedTags";
 
     /**
      * Key of online visitor count.
@@ -305,11 +270,6 @@ public final class Common {
      * Key of permalink.
      */
     public static final String PERMALINK = "permalink";
-
-    /**
-     * Key of commentable.
-     */
-    public static final String COMMENTABLE = "commentable";
 
     /**
      * Key of articles view password.

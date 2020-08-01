@@ -125,13 +125,12 @@ public class UserMgmtService {
             }
             res.charset("UTF-8");
             final JSONObject result = new JSONObject(res.bodyText());
-            if (0 != result.optInt(Keys.STATUS_CODE)) {
+            if (0 != result.optInt(Keys.CODE)) {
                 return;
             }
             usite = result.optJSONObject(Common.DATA);
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, "Gets usite failed", e);
-
             return;
         }
 
@@ -146,8 +145,6 @@ public class UserMgmtService {
             optionMgmtService.addOrUpdateOption(usiteOpt);
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, "Updates usite option failed", e);
-
-            return;
         }
     }
 

@@ -1,23 +1,45 @@
 <hr/>
-<div class="wrapper">
+<div class="commentFont" id = "commentIcon" style="margin: 0 auto; text-align: center; padding-bottom: 20px">
+    <img src="https://img.lonuslan.com/lonuslan/20200727/1P1VgFJPjTKg.png"/>
+    <span style="font-size: 30px; vertical-align: middle;">
+        评论
+    </span>
+</div>
+<div class="wrapper view-article">
 <div class="Valine">
 </div>
 </div>
 <#--<script src='https://img.lonuslan.com/lonuslan/20200724/kaD7UaLWrx0i.js'></script>-->
 <#--<script src='https://unpkg.com/valine/dist/Valine.min.js'></script>-->
-<script src="https://cdn.jsdelivr.net/gh/HCLonely/Valine@latest/dist/Valine.min.js"></script>
+<script src="https://img.lonuslan.com/lonuslan/20200729/Valine.min.js"></script>
 <script>
     const valine = new Valine({
         el: '.Valine',
         appId: 'G9biID9XRxn5YbHGv99L9HQ5-9Nh9j0Va',
         appKey: 'eqfSV7FBGCr0HBqWj0EkbaYS',
-        placeholder: '留下您的足迹吧!(●\'◡\'●)',
+        placeholder: '留下您的足迹吧 (●\'◡\'●)',
         lang: 'zh-CN',
         avatar: 'wavatar',
         enableQQ: 'true',
-        metaPlaceholder: {"nick":"昵称/QQ号","mail":"邮箱（接收提醒）","link":"个人站点"},
+        metaPlaceholder: {"nick":"昵称/QQ号(必填)","mail":"邮箱（接收提醒-必填）","link":"个人站点(选填)"},
         master: '6163aa7c062eae5ed4c4fd24f8635611',   //博主邮箱md5
         tagMeta: ["博主","小伙伴","访客"],     //标识字段名
         friends:  [],  //小伙伴邮箱Md5
     });
+    // function showDialog(){
+    //     $(".vnick").focus(function () {
+    //         var addHtml = "<span class = \"popuptext\" id = \"thepopup\" style = \"margin-left: -115px;width: 230px;\">moumoumou</span>";
+    //         $(".vheader").append(addHtml);
+    //         cmt_showPopup(this);
+    //     });
+    // };
+    // function cmt_showPopup(ele) {
+    //     var popup = $(ele).find("#thePopup");
+    //     popup.addClass("show");
+    //     $(ele).find("input").blur(function () {
+    //         var popup = $(ele).find("#thePopup");
+    //         popup.removeClass("show");
+    //     });
+    // };
+    // showDialog();
 </script>

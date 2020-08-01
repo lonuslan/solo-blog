@@ -13,6 +13,7 @@
 -->
 <script>
   var Label = {
+    speech: ${speech?c},
     servePath: "${servePath}",
     staticServePath: "${staticServePath}",
     luteAvailable: ${luteAvailable?c},
@@ -21,5 +22,8 @@
     version: "${version}",
     staticSite: ${staticSite?c},
     showCodeBlockLn: ${showCodeBlockLn},
+    <#if article??>
+    articleId: "${article.oId}",
+    </#if>
   }
 </script>

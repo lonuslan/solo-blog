@@ -49,7 +49,7 @@ public final class Sitemap {
     /**
      * URLs.
      */
-    private List<URL> urls = new ArrayList<>();
+    private final List<URL> urls = new ArrayList<>();
 
     /**
      * Adds the specified url.
@@ -63,16 +63,12 @@ public final class Sitemap {
     @Override
     public String toString() {
         final StringBuilder stringBuilder = new StringBuilder();
-
         stringBuilder.append(START_DOCUMENT);
         stringBuilder.append(START_URL_SET_ELEMENT);
-
         for (final URL url : urls) {
             stringBuilder.append(url.toString());
         }
-
         stringBuilder.append(END_URL_SET_ELEMENT);
-
         return stringBuilder.toString();
     }
 }

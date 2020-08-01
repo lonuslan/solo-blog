@@ -23,7 +23,7 @@ window.Vcomment = Vcomment
  *
  * @author <a href="http://vanessa.b3log.org">Liyuan Li</a>
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
- * @version 2.2.0.1, Feb 23, 2020
+ * @version 2.3.2.0, Jun 19, 2020
  */
 
 /**
@@ -110,6 +110,9 @@ window.Util = {
         },
         callback: function () {
           Util.parseMarkdown()
+          if (typeof Util.uvstat === 'undefined') {
+            Util.uvstat = new Uvstat()
+          }
           Util.uvstat.addStat()
           Util.uvstat.renderStat()
           Util.uvstat.renderCmtStat(
@@ -171,6 +174,7 @@ window.Util = {
       lineNumber: Label.showCodeBlockLn,
       hljsEnable: !Label.luteAvailable,
       hljsStyle: Label.hljsStyle,
+      speech: Label.speech
     })
   },
   /**
@@ -303,7 +307,7 @@ window.Util = {
   loadVditor: function (cb) {
     $.ajax({
       method: 'GET',
-      url: 'https://cdn.jsdelivr.net/npm/vditor@3.1.12/dist/index.min.js',
+      url: 'https://cdn.jsdelivr.net/npm/vditor@3.3.11/dist/index.min.js',
       dataType: 'script',
       cache: true,
       success: () => {
@@ -314,9 +318,35 @@ window.Util = {
       },
     })
   },
+  skinPreview: () => {
+    if (location.pathname === '/admin-index.do') {
+      return
+    }
+    const skinParam = location.search.split('skin=')
+    let skin = ''
+    let urlHasSkin = false
+    if (skinParam.length === 2) {
+      skin = skinParam[1].split('=')[0]
+      urlHasSkin = true
+    }
+    if (skin) {
+      sessionStorage.setItem('skin', skin)
+    } else {
+      skin = sessionStorage.getItem('skin')
+    }
+    if (!skin) {
+      return
+    }
+    if (!urlHasSkin) {
+      location.search = location.search
+        ? location.search + '&skin=' + skin
+        : '?skin=' + skin
+    }
+  },
 };
 
 (() => {
+  Util.skinPreview()
   if (typeof Vditor === 'undefined') {
     Util.loadVditor()
   }

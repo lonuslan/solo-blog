@@ -11,20 +11,23 @@
  */
 package org.b3log.solo.service;
 
+import org.b3log.latke.Latkes;
 import org.b3log.latke.model.User;
+import org.b3log.latke.util.URLs;
 import org.b3log.solo.AbstractTestCase;
 import org.b3log.solo.util.Solos;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 /**
  * {@link UserQueryService} test case.
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
  * @author <a href="https://hacpai.com/member/nanolikeyou">nanolikeyou</a>
- * @version 1.0.0.3, Feb 11, 2019
+ * @version 1.0.0.4, May 9, 2020
  */
 @Test(suiteName = "service")
 public class UserQueryServiceTestCase extends AbstractTestCase {
@@ -80,8 +83,8 @@ public class UserQueryServiceTestCase extends AbstractTestCase {
 
         final JSONObject paginationRequest = Solos.buildPaginationRequest("1/20/10");
         final JSONObject result = userQueryService.getUsers(paginationRequest);
-        final JSONArray users = result.getJSONArray(User.USERS);
-        Assert.assertEquals(users.length(), 2);
+        final List<JSONObject> users = (List<JSONObject>) result.opt(User.USERS);
+        Assert.assertEquals(users.size(), 2);
     }
 
     /**
@@ -89,9 +92,10 @@ public class UserQueryServiceTestCase extends AbstractTestCase {
      */
     public void getLoginURL() {
         final UserQueryService userQueryService = getUserQueryService();
-        final String loginURL = userQueryService.getLoginURL("redirectURL");
+        final String redirectURI = "/redirectURI";
+        final String loginURL = userQueryService.getLoginURL(redirectURI);
 
-        Assert.assertEquals(loginURL, "/start?referer=http%3A%2F%2Flocalhost%3A8080redirectURL");
+        Assert.assertEquals(loginURL, "/start?referer=" + URLs.encode(Latkes.getServePath() + redirectURI));
     }
 
     /**
@@ -101,6 +105,6 @@ public class UserQueryServiceTestCase extends AbstractTestCase {
         final UserQueryService userQueryService = getUserQueryService();
         final String logoutURL = userQueryService.getLogoutURL();
 
-        Assert.assertEquals(logoutURL, "/logout?referer=http%3A%2F%2Flocalhost%3A8080");
+        Assert.assertEquals(logoutURL, "/logout?referer=" + URLs.encode(Latkes.getServePath()));
     }
 }

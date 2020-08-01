@@ -38,8 +38,7 @@
 <div id="tabPreferencePanel" class="sub-tabs-main">
     <div id="tabPreferencePanel_config" class="form">
         <div class="fn__clear">
-            <a style="line-height: 32px" href="https://hacpai.com/settings" target="_blank">前往配置 GitHub，Twitter
-                等站点链接</a>
+            <a style="line-height: 32px" href="https://hacpai.com/settings" target="_blank">${configSiteLabel}</a>
             <button onclick="admin.preference.update()" class="fn__right">${updateLabel}</button>
         </div>
         <div class="fn__clear"></div>
@@ -58,8 +57,7 @@
         <label for="footerContent">${footerContent1Label}</label>
         <textarea rows="2" id="footerContent"></textarea><br><br>
         <div class="fn__clear">
-            <a style="line-height: 32px" href="https://hacpai.com/settings" target="_blank">前往配置 GitHub，Twitter
-                等站点链接</a>
+            <a style="line-height: 32px" href="https://hacpai.com/settings" target="_blank">${configSiteLabel}</a>
             <button onclick="admin.preference.update()" class="fn__right">${updateLabel}</button>
         </div>
     </div>
@@ -147,40 +145,24 @@
                     <input id="customVars" class="normalInput" type="text"/>
                 </label>
                 <label>
-                    <div class="fn__flex-inline">
-                        ${enableArticleUpdateHint1Label}
-                        <input id="enableArticleUpdateHint" type="checkbox" class="normalInput"/>
-                    </div>
+                    ${githubPATLabel}
+                    <input id="githubPAT" class="normalInput" type="text"/>
                 </label>
-                <label>
-                    <div class="fn__flex-inline">
-                        ${allowVisitDraftViaPermalink1Label}
-                        <input id="allowVisitDraftViaPermalink" type="checkbox" class="normalInput"/>
-                    </div>
+                <label class="checkbox">
+                    <input id="enableArticleUpdateHint" type="checkbox" class="normalInput"/>
+                    <span>&nbsp;${enableArticleUpdateHint1Label}</span>
                 </label>
-                <label>
-                    <div class="fn__flex-inline">
-                        ${allowComment1Label}
-                        <input id="commentable" type="checkbox" class="normalInput"/>
-                    </div>
+                <label class="checkbox">
+                    <input id="allowVisitDraftViaPermalink" type="checkbox" class="normalInput"/>
+                    <span>&nbsp;${allowVisitDraftViaPermalink1Label}</span>
                 </label>
-                <label>
-                    <div class="fn__flex-inline">
-                        ${syncGitHubLabel}
-                        <input id="syncGitHub" type="checkbox" class="normalInput"/>
-                    </div>
+                <label class="checkbox">
+                    <input id="syncGitHub" type="checkbox" class="normalInput"/>
+                    <span>&nbsp;${syncGitHubLabel}</span>
                 </label>
-                <label>
-                    <div class="fn__flex-inline">
-                        ${pullGitHubLabel}
-                        <input id="pullGitHub" type="checkbox" class="normalInput"/>
-                    </div>
-                </label>
-                <label>
-                    <div class="fn__flex-inline">
-                        ${showCodeBlockLnLabel}
-                        <input id="showCodeBlockLn" type="checkbox" class="normalInput"/>
-                    </div>
+                <label class="checkbox">
+                    <input id="pullGitHub" type="checkbox" class="normalInput"/>
+                    <span>&nbsp;${pullGitHubLabel}</span>
                 </label>
             </div>
             <div class="fn__margin12"></div>
@@ -188,18 +170,6 @@
                 <label>
                     ${indexTagDisplayCnt1Label}
                     <input id="mostUsedTagDisplayCount" class="normalInput" type="text"/>
-                </label>
-                <label>
-                    ${indexRecentCommentDisplayCnt1Label}
-                    <input id="recentCommentDisplayCount" class="normalInput" type="text"/>
-                </label>
-                <label>
-                    ${indexMostCommentArticleDisplayCnt1Label}
-                    <input id="mostCommentArticleDisplayCount" class="normalInput" type="text"/>
-                </label>
-                <label>
-                    ${indexMostViewArticleDisplayCnt1Label}
-                    <input id="mostViewArticleDisplayCount" class="normalInput" type="text"/>
                 </label>
                 <label>
                     ${randomArticlesDisplayCnt1Label}
@@ -245,28 +215,37 @@
     <div id="tabPreferencePanel_markdown" class="fn__none form">
         <button class="fn__right" onclick="admin.preference.update()">${updateLabel}</button>
         <div class="fn__clear"></div>
-
-        <label>${editorModeLabel}</label>
-        <div class="fn__flex">
-            <label class="checkbox fn__flex-1">
+        ${editorModeLabel}
+        <span class="fn__flex">
+            <label class="fn__flex-1 checkbox">
                 <input name="editorMode" type="radio" value="wysiwyg" checked>
                 <span>&nbsp;${editorModeWYSIWYGLabel}</span>
             </label>
-            <label class="checkbox fn__flex-1">
+            <label class="fn__flex-1 checkbox">
                 <input name="editorMode" type="radio" value="ir">
                 <span>&nbsp;${editorModeIRLabel}</span>
             </label>
-            <label class="checkbox fn__flex-1">
+            <label class="fn__flex-1 checkbox">
                 <input name="editorMode" type="radio" value="sv">
                 <span>&nbsp;${editorModeSVLabel}</span>
             </label>
-        </div>
-
+        </span>
+        <label class="checkbox">
+            <input id="showCodeBlockLn" type="checkbox" class="normalInput"/>
+            <span>&nbsp;${showCodeBlockLnLabel}</span>
+        </label>
+        <label class="checkbox">
+            <input id="speech" type="checkbox" class="normalInput"/>
+            <span>&nbsp;${speechSelectedLabel}</span>
+        </label>
         <#if !luteAvailable>
-            <div class="fn__clear">
-                ${luteHTTPLabel}
-            </div>
+            <br><br>
+            ${luteHTTPLabel}
         </#if>
+        <label class="checkbox">
+            <input id="paragraphBeginningSpace" type="checkbox" class="normalInput"/>
+            <span>&nbsp;${paragraphBeginningSpaceLabel}</span>
+        </label>
         <label class="checkbox">
             <input id="footnotes" type="checkbox" class="normalInput"/>
             <span>&nbsp;${supportFootnotesLabel}</span>

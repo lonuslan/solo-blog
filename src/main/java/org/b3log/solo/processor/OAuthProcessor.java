@@ -26,6 +26,7 @@ import org.b3log.latke.model.Role;
 import org.b3log.latke.model.User;
 import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.util.Requests;
+import org.b3log.solo.Server;
 import org.b3log.solo.model.UserExt;
 import org.b3log.solo.service.*;
 import org.b3log.solo.util.Solos;
@@ -43,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * </ul>
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
- * @version 2.0.0.1, Apr 14, 2020
+ * @version 2.0.0.2, Jun 10, 2020
  * @since 2.9.5
  */
 @Singleton
@@ -106,11 +107,11 @@ public class OAuthProcessor {
             referer = Latkes.getServePath();
         }
 
-        String state = RandomStringUtils.randomAlphanumeric(16);
+        final String state = RandomStringUtils.randomAlphanumeric(16);
         STATES.put(state, referer);
 
         final String loginAuthURL = "https://hacpai.com/login?goto=" + Latkes.getServePath() + "/login/callback";
-        final String path = loginAuthURL + "?state=" + state;
+        final String path = loginAuthURL + "&state=" + state + "&v=" + Server.VERSION;
         context.sendRedirect(path);
     }
 
@@ -124,25 +125,32 @@ public class OAuthProcessor {
         final String referer = STATES.get(state);
         if (null == referer) {
             context.sendError(400);
-
             return;
         }
         STATES.remove(state);
 
         final Response response = context.getResponse();
         final Request request = context.getRequest();
-        final String openId = context.param("userId");
-        final String userName = context.param(User.USER_NAME);
-        final String userAvatar = context.param("avatar");
+        final String accessToken = context.param("access_token");
+        final JSONObject userInfo = Solos.getUserInfo(accessToken);
+        if (null == userInfo) {
+            LOGGER.log(Level.WARN, "Can't get user info with token [" + accessToken + "]");
+            context.sendError(401);
+            return;
+        }
 
-        JSONObject user = userQueryService.getUserByGitHubId(openId);
+        final String userId = userInfo.optString("userId");
+        final String userName = userInfo.optString(User.USER_NAME);
+        final String userAvatar = userInfo.optString("avatar");
+
+        JSONObject user = userQueryService.getUserByGitHubId(userId);
         if (null == user) {
             if (!initService.isInited()) {
                 final JSONObject initReq = new JSONObject();
                 initReq.put(User.USER_NAME, userName);
                 initReq.put(UserExt.USER_AVATAR, userAvatar);
                 initReq.put(UserExt.USER_B3_KEY, userName);
-                initReq.put(UserExt.USER_GITHUB_ID, openId);
+                initReq.put(UserExt.USER_GITHUB_ID, userId);
                 initService.init(initReq);
             } else {
                 user = userQueryService.getUserByName(userName);
@@ -151,25 +159,23 @@ public class OAuthProcessor {
                     addUserReq.put(User.USER_NAME, userName);
                     addUserReq.put(UserExt.USER_AVATAR, userAvatar);
                     addUserReq.put(User.USER_ROLE, Role.VISITOR_ROLE);
-                    addUserReq.put(UserExt.USER_GITHUB_ID, openId);
+                    addUserReq.put(UserExt.USER_GITHUB_ID, userId);
                     addUserReq.put(UserExt.USER_B3_KEY, userName);
                     try {
                         userMgmtService.addUser(addUserReq);
                     } catch (final Exception e) {
                         LOGGER.log(Level.ERROR, "Registers via oauth failed", e);
                         context.sendError(500);
-
                         return;
                     }
                 } else {
-                    user.put(UserExt.USER_GITHUB_ID, openId);
+                    user.put(UserExt.USER_GITHUB_ID, userId);
                     user.put(UserExt.USER_AVATAR, userAvatar);
                     try {
                         userMgmtService.updateUser(user);
                     } catch (final Exception e) {
-                        LOGGER.log(Level.ERROR, "Updates user GitHub id failed", e);
+                        LOGGER.log(Level.ERROR, "Updates user id failed", e);
                         context.sendError(500);
-
                         return;
                     }
                 }
@@ -182,7 +188,6 @@ public class OAuthProcessor {
             } catch (final Exception e) {
                 LOGGER.log(Level.ERROR, "Updates user name failed", e);
                 context.sendError(500);
-
                 return;
             }
         }
@@ -191,7 +196,6 @@ public class OAuthProcessor {
         if (null == user) {
             LOGGER.log(Level.WARN, "Can't get user by name [" + userName + "]");
             context.sendError(404);
-
             return;
         }
 

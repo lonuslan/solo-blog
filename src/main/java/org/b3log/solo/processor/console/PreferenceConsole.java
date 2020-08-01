@@ -26,6 +26,7 @@ import org.b3log.solo.model.Sign;
 import org.b3log.solo.service.OptionMgmtService;
 import org.b3log.solo.service.OptionQueryService;
 import org.b3log.solo.service.PreferenceMgmtService;
+import org.b3log.solo.util.StatusCodes;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -34,7 +35,7 @@ import org.json.JSONObject;
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
  * @author <a href="https://hacpai.com/member/hzchendou">hzchendou</a>
- * @version 2.0.0.1, Apr 6, 2020
+ * @version 2.0.0.2, Jul 4, 2020
  * @since 0.4.0
  */
 @Singleton
@@ -75,7 +76,7 @@ public class PreferenceConsole {
      * Renders the response with a json object, for example,
      * <pre>
      * {
-     *     "sc": boolean,
+     *     "code": int,
      *     "signs": [{
      *         "oId": "",
      *         "signHTML": ""
@@ -89,25 +90,21 @@ public class PreferenceConsole {
     public void getSigns(final RequestContext context) {
         final JsonRenderer renderer = new JsonRenderer();
         context.setRenderer(renderer);
-
         try {
             final JSONObject preference = optionQueryService.getPreference();
             final JSONArray signs = new JSONArray();
             final JSONArray allSigns = // includes the empty sign(id=0)
                     new JSONArray(preference.getString(Option.ID_C_SIGNS));
-
             for (int i = 1; i < allSigns.length(); i++) { // excludes the empty sign
                 signs.put(allSigns.getJSONObject(i));
             }
-
             final JSONObject ret = new JSONObject();
             renderer.setJSONObject(ret);
             ret.put(Sign.SIGNS, signs);
-            ret.put(Keys.STATUS_CODE, true);
+            ret.put(Keys.CODE, StatusCodes.SUCC);
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
-            final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+            final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
             renderer.setJSONObject(jsonObject);
             jsonObject.put(Keys.MSG, langPropsService.get("getFailLabel"));
         }
@@ -119,14 +116,11 @@ public class PreferenceConsole {
      * Renders the response with a json object, for example,
      * <pre>
      * {
-     *     "sc": boolean,
+     *     "code": int,
      *     "preference": {
-     *         "mostViewArticleDisplayCount": int,
-     *         "recentCommentDisplayCount": int,
      *         "mostUsedTagDisplayCount": int,
      *         "articleListDisplayCount": int,
      *         "articleListPaginationWindowSize": int,
-     *         "mostCommentArticleDisplayCount": int,
      *         "externalRelevantArticlesDisplayCount": int,
      *         "relevantArticlesDisplayCount": int,
      *         "randomArticlesDisplayCount": int,
@@ -151,7 +145,6 @@ public class PreferenceConsole {
      *         "allowVisitDraftViaPermalink": boolean,
      *         "version": "",
      *         "articleListStyle": "", // Optional values: "titleOnly"/"titleAndContent"/"titleAndAbstract"
-     *         "commentable": boolean,
      *         "feedOutputMode: "" // Optional values: "abstract"/"full"
      *         "feedOutputCnt": int,
      *         "faviconURL": "",
@@ -180,8 +173,7 @@ public class PreferenceConsole {
         try {
             final JSONObject preference = optionQueryService.getPreference();
             if (null == preference) {
-                renderer.setJSONObject(new JSONObject().put(Keys.STATUS_CODE, false));
-
+                renderer.setJSONObject(new JSONObject().put(Keys.CODE, StatusCodes.ERR));
                 return;
             }
 
@@ -195,11 +187,10 @@ public class PreferenceConsole {
             final JSONObject ret = new JSONObject();
             renderer.setJSONObject(ret);
             ret.put(Option.CATEGORY_C_PREFERENCE, preference);
-            ret.put(Keys.STATUS_CODE, true);
+            ret.put(Keys.CODE, StatusCodes.SUCC);
         } catch (final Exception e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
-            final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+            final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
             renderer.setJSONObject(jsonObject);
             jsonObject.put(Keys.MSG, langPropsService.get("getFailLabel"));
         }
@@ -212,12 +203,9 @@ public class PreferenceConsole {
      * <pre>
      * {
      *     "preference": {
-     *         "mostViewArticleDisplayCount": int,
-     *         "recentCommentDisplayCount": int,
      *         "mostUsedTagDisplayCount": int,
      *         "articleListDisplayCount": int,
      *         "articleListPaginationWindowSize": int,
-     *         "mostCommentArticleDisplayCount": int,
      *         "externalRelevantArticlesDisplayCount": int,
      *         "relevantArticlesDisplayCount": int,
      *         "randomArticlesDisplayCount": int,
@@ -237,7 +225,6 @@ public class PreferenceConsole {
      *             }, ...],
      *         "allowVisitDraftViaPermalink": boolean,
      *         "articleListStyle": "",
-     *         "commentable": boolean,
      *         "feedOutputMode: "",
      *         "feedOutputCnt": int,
      *         "faviconURL": "",
@@ -274,12 +261,11 @@ public class PreferenceConsole {
 
             preferenceMgmtService.updatePreference(preference);
 
-            ret.put(Keys.STATUS_CODE, true);
+            ret.put(Keys.CODE, StatusCodes.SUCC);
             ret.put(Keys.MSG, langPropsService.get("updateSuccLabel"));
         } catch (final ServiceException e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
-
-            final JSONObject jsonObject = new JSONObject().put(Keys.STATUS_CODE, false);
+            final JSONObject jsonObject = new JSONObject().put(Keys.CODE, StatusCodes.ERR);
             renderer.setJSONObject(jsonObject);
             jsonObject.put(Keys.MSG, langPropsService.get("updateFailLabel"));
         }
@@ -293,7 +279,7 @@ public class PreferenceConsole {
      * @return {@code true} if the specified preference is invalid, returns {@code false} otherwise
      */
     private boolean isInvalid(final JSONObject preference, final JSONObject responseObject) {
-        responseObject.put(Keys.STATUS_CODE, false);
+        responseObject.put(Keys.CODE, StatusCodes.ERR);
 
         final StringBuilder errMsgBuilder = new StringBuilder('[' + langPropsService.get("paramSettingsLabel"));
         errMsgBuilder.append(" - ");
@@ -317,30 +303,6 @@ public class PreferenceConsole {
         input = preference.optString(Option.ID_C_RANDOM_ARTICLES_DISPLAY_CNT);
         if (!isNonNegativeInteger(input)) {
             errMsgBuilder.append(langPropsService.get("randomArticlesDisplayCntLabel")).append("]  ")
-                    .append(langPropsService.get("nonNegativeIntegerOnlyLabel"));
-            responseObject.put(Keys.MSG, errMsgBuilder.toString());
-            return true;
-        }
-
-        input = preference.optString(Option.ID_C_MOST_COMMENT_ARTICLE_DISPLAY_CNT);
-        if (!isNonNegativeInteger(input)) {
-            errMsgBuilder.append(langPropsService.get("indexMostCommentArticleDisplayCntLabel")).append("]  ")
-                    .append(langPropsService.get("nonNegativeIntegerOnlyLabel"));
-            responseObject.put(Keys.MSG, errMsgBuilder.toString());
-            return true;
-        }
-
-        input = preference.optString(Option.ID_C_MOST_VIEW_ARTICLE_DISPLAY_CNT);
-        if (!isNonNegativeInteger(input)) {
-            errMsgBuilder.append(langPropsService.get("indexMostViewArticleDisplayCntLabel")).append("]  ")
-                    .append(langPropsService.get("nonNegativeIntegerOnlyLabel"));
-            responseObject.put(Keys.MSG, errMsgBuilder.toString());
-            return true;
-        }
-
-        input = preference.optString(Option.ID_C_RECENT_COMMENT_DISPLAY_CNT);
-        if (!isNonNegativeInteger(input)) {
-            errMsgBuilder.append(langPropsService.get("indexRecentCommentDisplayCntLabel")).append("]  ")
                     .append(langPropsService.get("nonNegativeIntegerOnlyLabel"));
             responseObject.put(Keys.MSG, errMsgBuilder.toString());
             return true;
@@ -377,7 +339,6 @@ public class PreferenceConsole {
             responseObject.put(Keys.MSG, errMsgBuilder.toString());
             return true;
         }
-
         return false;
     }
 

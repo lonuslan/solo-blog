@@ -11,17 +11,18 @@
  */
 package org.b3log.solo.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.ioc.Inject;
+import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.service.annotation.Service;
 import org.b3log.solo.model.Page;
-import org.b3log.solo.repository.CommentRepository;
 import org.b3log.solo.repository.PageRepository;
 import org.b3log.solo.util.Statics;
 import org.json.JSONObject;
@@ -31,7 +32,7 @@ import org.json.JSONObject;
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
  * @author <a href="http://vanessa.b3log.org">Vanessa</a>
- * @version 1.1.0.20, Apr 15, 2020
+ * @version 1.1.2.1, Jul 8, 2020
  * @since 0.4.0
  */
 @Service
@@ -47,12 +48,6 @@ public class PageMgmtService {
      */
     @Inject
     private PageRepository pageRepository;
-
-    /**
-     * Comment repository.
-     */
-    @Inject
-    private CommentRepository commentRepository;
 
     /**
      * User query service.
@@ -120,7 +115,8 @@ public class PageMgmtService {
             final JSONObject oldPage = pageRepository.get(pageId);
             final JSONObject newPage = new JSONObject(page, JSONObject.getNames(page));
             newPage.put(Page.PAGE_ORDER, oldPage.getInt(Page.PAGE_ORDER));
-            final String permalink = page.optString(Page.PAGE_PERMALINK).trim();
+            String permalink = page.optString(Page.PAGE_PERMALINK).trim();
+            permalink = StringUtils.replace(permalink, " ", "-");
             newPage.put(Page.PAGE_PERMALINK, permalink);
             page.put(Page.PAGE_ICON, page.optString(Page.PAGE_ICON));
 
@@ -150,7 +146,6 @@ public class PageMgmtService {
         final Transaction transaction = pageRepository.beginTransaction();
         try {
             pageRepository.remove(pageId);
-            commentRepository.removeComments(pageId);
             transaction.commit();
 
             Statics.clear();
@@ -160,7 +155,6 @@ public class PageMgmtService {
             }
 
             LOGGER.log(Level.ERROR, "Removes a page[id=" + pageId + "] failed", e);
-
             throw new ServiceException(e);
         }
     }
@@ -188,15 +182,8 @@ public class PageMgmtService {
             final int maxOrder = pageRepository.getMaxOrder();
             page.put(Page.PAGE_ORDER, maxOrder + 1);
 
-            final String permalink = page.optString(Page.PAGE_PERMALINK);
-            if (permalinkQueryService.exist(permalink)) {
-                if (transaction.isActive()) {
-                    transaction.rollback();
-                }
-
-                throw new ServiceException(langPropsService.get("duplicatedPermalinkLabel"));
-            }
-
+            String permalink = page.optString(Page.PAGE_PERMALINK);
+            permalink = StringUtils.replace(permalink, " ", "-");
             page.put(Page.PAGE_PERMALINK, permalink);
             page.put(Page.PAGE_ICON, page.optString(Page.PAGE_ICON));
             final String ret = pageRepository.add(page);
@@ -205,12 +192,11 @@ public class PageMgmtService {
             Statics.clear();
 
             return ret;
-        } catch (final Exception e) {
+        } catch (final RepositoryException e) {
             LOGGER.log(Level.ERROR, e.getMessage(), e);
             if (transaction.isActive()) {
                 transaction.rollback();
             }
-
             throw new ServiceException(e);
         }
     }
@@ -258,7 +244,6 @@ public class PageMgmtService {
             }
 
             LOGGER.log(Level.ERROR, "Changes page's order failed", e);
-
             throw new ServiceException(e);
         }
     }

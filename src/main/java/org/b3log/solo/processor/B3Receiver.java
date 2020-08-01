@@ -24,16 +24,18 @@ import org.b3log.solo.model.Article;
 import org.b3log.solo.model.Common;
 import org.b3log.solo.model.UserExt;
 import org.b3log.solo.repository.ArticleRepository;
-import org.b3log.solo.repository.CommentRepository;
 import org.b3log.solo.repository.UserRepository;
-import org.b3log.solo.service.*;
+import org.b3log.solo.service.ArticleMgmtService;
+import org.b3log.solo.service.ArticleQueryService;
+import org.b3log.solo.service.OptionQueryService;
+import org.b3log.solo.service.UserMgmtService;
 import org.json.JSONObject;
 
 /**
- * Receiving articles and comments from B3log community. Visits <a href="https://hacpai.com/article/1546941897596">B3log 构思 - 分布式社区网络</a> for more details.
+ * Receiving articles from B3log community. Visits <a href="https://hacpai.com/article/1546941897596">B3log 构思 - 分布式社区网络</a> for more details.
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
- * @version 3.0.0.3, Mar 31, 2020
+ * @version 3.0.0.5, Jul 8, 2020
  * @since 0.5.5
  */
 @Singleton
@@ -51,22 +53,10 @@ public class B3Receiver {
     private UserRepository userRepository;
 
     /**
-     * Comment repository.
-     */
-    @Inject
-    private static CommentRepository commentRepository;
-
-    /**
      * Article repository.
      */
     @Inject
     private ArticleRepository articleRepository;
-
-    /**
-     * Comment management service.
-     */
-    @Inject
-    private CommentMgmtService commentMgmtService;
 
     /**
      * Article management service.
@@ -100,10 +90,10 @@ public class B3Receiver {
      * {
      *     "article": {
      *         "id": "",
-     *          "title": "",
-     *          "content": "",
-     *          "contentHTML": "",
-     *          "tags": "tag1,tag2,tag3"
+     *         "title": "",
+     *         "content": "",
+     *         "contentHTML": "",
+     *         "tags": "tag1,tag2,tag3"
      *     },
      *     "client": {
      *         "userName": "",
@@ -116,7 +106,7 @@ public class B3Receiver {
      * Renders the response with a json object, for example,
      * <pre>
      * {
-     *     "sc": boolean,
+     *     "code": int,
      *     "oId": "", // Generated article id
      *     "msg": ""
      * }
@@ -125,7 +115,7 @@ public class B3Receiver {
      *
      * @param context the specified request context
      */
-    public void postArticle(final RequestContext context) {
+    public void receiveArticle(final RequestContext context) {
         final JSONObject ret = new JSONObject().put(Keys.CODE, 0);
         context.renderJSON(ret);
 
@@ -139,7 +129,6 @@ public class B3Receiver {
                 final String msg = "Not found client";
                 ret.put(Keys.MSG, msg);
                 LOGGER.log(Level.WARN, msg);
-
                 return;
             }
 
@@ -151,7 +140,6 @@ public class B3Receiver {
                 final String msg = "Not found user [" + articleAuthorName + "]";
                 ret.put(Keys.MSG, msg);
                 LOGGER.log(Level.WARN, msg);
-
                 return;
             }
 
@@ -162,7 +150,6 @@ public class B3Receiver {
                 final String msg = "Wrong key";
                 ret.put(Keys.MSG, msg);
                 LOGGER.log(Level.WARN, msg);
-
                 return;
             }
 
@@ -172,7 +159,6 @@ public class B3Receiver {
                 final String msg = "Not found article";
                 ret.put(Keys.MSG, msg);
                 LOGGER.log(Level.WARN, msg);
-
                 return;
             }
 
@@ -190,14 +176,12 @@ public class B3Receiver {
                 article.put(Article.ARTICLE_ABSTRACT, Article.getAbstractText(articleContent));
                 article.put(Article.ARTICLE_STATUS, Article.ARTICLE_STATUS_C_PUBLISHED);
                 article.put(Common.POST_TO_COMMUNITY, false); // Do not send to rhythm
-                article.put(Article.ARTICLE_COMMENTABLE, true);
                 article.put(Article.ARTICLE_VIEW_PWD, "");
                 final String content = article.getString(Article.ARTICLE_CONTENT);
                 article.put(Article.ARTICLE_CONTENT, content);
                 final JSONObject addRequest = new JSONObject().put(Article.ARTICLE, article);
                 articleMgmtService.addArticle(addRequest);
                 LOGGER.log(Level.INFO, "Added an article [" + title + "] via Sym");
-
                 return;
             }
 

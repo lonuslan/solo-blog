@@ -35,7 +35,7 @@ import java.util.Locale;
  * Preference management service.
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
- * @version 1.4.0.7, Apr 15, 2020
+ * @version 1.4.0.10, Jul 5, 2020
  * @since 0.4.0
  */
 @Service
@@ -115,10 +115,6 @@ public class PreferenceMgmtService {
             blogTitleOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_BLOG_TITLE));
             optionRepository.update(Option.ID_C_BLOG_TITLE, blogTitleOpt);
 
-            final JSONObject commentableOpt = optionRepository.get(Option.ID_C_COMMENTABLE);
-            commentableOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_COMMENTABLE));
-            optionRepository.update(Option.ID_C_COMMENTABLE, commentableOpt);
-
             final JSONObject enableArticleUpdateHintOpt = optionRepository.get(Option.ID_C_ENABLE_ARTICLE_UPDATE_HINT);
             enableArticleUpdateHintOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_ENABLE_ARTICLE_UPDATE_HINT));
             optionRepository.update(Option.ID_C_ENABLE_ARTICLE_UPDATE_HINT, enableArticleUpdateHintOpt);
@@ -155,17 +151,9 @@ public class PreferenceMgmtService {
             metaKeywordsOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_META_KEYWORDS));
             optionRepository.update(Option.ID_C_META_KEYWORDS, metaKeywordsOpt);
 
-            final JSONObject mostCommentArticleDisplayCountOpt = optionRepository.get(Option.ID_C_MOST_COMMENT_ARTICLE_DISPLAY_CNT);
-            mostCommentArticleDisplayCountOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_MOST_COMMENT_ARTICLE_DISPLAY_CNT));
-            optionRepository.update(Option.ID_C_MOST_COMMENT_ARTICLE_DISPLAY_CNT, mostCommentArticleDisplayCountOpt);
-
             final JSONObject mostUsedTagDisplayCountOpt = optionRepository.get(Option.ID_C_MOST_USED_TAG_DISPLAY_CNT);
             mostUsedTagDisplayCountOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_MOST_USED_TAG_DISPLAY_CNT));
             optionRepository.update(Option.ID_C_MOST_USED_TAG_DISPLAY_CNT, mostUsedTagDisplayCountOpt);
-
-            final JSONObject mostViewArticleDisplayCountOpt = optionRepository.get(Option.ID_C_MOST_VIEW_ARTICLE_DISPLAY_CNT);
-            mostViewArticleDisplayCountOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_MOST_VIEW_ARTICLE_DISPLAY_CNT));
-            optionRepository.update(Option.ID_C_MOST_VIEW_ARTICLE_DISPLAY_CNT, mostViewArticleDisplayCountOpt);
 
             final JSONObject noticeBoardOpt = optionRepository.get(Option.ID_C_NOTICE_BOARD);
             noticeBoardOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_NOTICE_BOARD));
@@ -178,10 +166,6 @@ public class PreferenceMgmtService {
             final JSONObject recentArticleDisplayCountOpt = optionRepository.get(Option.ID_C_RECENT_ARTICLE_DISPLAY_CNT);
             recentArticleDisplayCountOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_RECENT_ARTICLE_DISPLAY_CNT));
             optionRepository.update(Option.ID_C_RECENT_ARTICLE_DISPLAY_CNT, recentArticleDisplayCountOpt);
-
-            final JSONObject recentCommentDisplayCountOpt = optionRepository.get(Option.ID_C_RECENT_COMMENT_DISPLAY_CNT);
-            recentCommentDisplayCountOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_RECENT_COMMENT_DISPLAY_CNT));
-            optionRepository.update(Option.ID_C_RECENT_COMMENT_DISPLAY_CNT, recentCommentDisplayCountOpt);
 
             final JSONObject relevantArticlesDisplayCountOpt = optionRepository.get(Option.ID_C_RELEVANT_ARTICLES_DISPLAY_CNT);
             relevantArticlesDisplayCountOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_RELEVANT_ARTICLES_DISPLAY_CNT));
@@ -207,6 +191,9 @@ public class PreferenceMgmtService {
             syncGitHubOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_SYNC_GITHUB));
             optionRepository.update(Option.ID_C_SYNC_GITHUB, syncGitHubOpt);
 
+            final String githubPATVal = preference.optString(Option.ID_C_GITHUB_PAT);
+            emptyPreferenceOptSave(Option.ID_C_GITHUB_PAT, githubPATVal);
+
             final JSONObject pullGitHubOpt = optionRepository.get(Option.ID_C_PULL_GITHUB);
             pullGitHubOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_PULL_GITHUB));
             optionRepository.update(Option.ID_C_PULL_GITHUB, pullGitHubOpt);
@@ -215,40 +202,32 @@ public class PreferenceMgmtService {
             hljsThemeOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_HLJS_THEME));
             optionRepository.update(Option.ID_C_HLJS_THEME, hljsThemeOpt);
 
-            final String showCodeBlockLnVal = preference.optString(Option.ID_C_SHOW_CODE_BLOCK_LN);
-            emptyPreferenceOptSave(Option.ID_C_SHOW_CODE_BLOCK_LN, showCodeBlockLnVal);
-            Markdowns.SHOW_CODE_BLOCK_LN = "true".equalsIgnoreCase(showCodeBlockLnVal);
-
             final JSONObject customVarsOpt = optionRepository.get(Option.ID_C_CUSTOM_VARS);
             customVarsOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_CUSTOM_VARS));
             optionRepository.update(Option.ID_C_CUSTOM_VARS, customVarsOpt);
 
-            final String footnotesVal = preference.optString(Option.ID_C_FOOTNOTES);
-            emptyPreferenceOptSave(Option.ID_C_FOOTNOTES, footnotesVal);
-            Markdowns.FOOTNOTES = "true".equalsIgnoreCase(footnotesVal);
-
-            final String showToCVal = preference.optString(Option.ID_C_SHOW_TOC);
-            emptyPreferenceOptSave(Option.ID_C_SHOW_TOC, showToCVal);
-            Markdowns.SHOW_TOC = "true".equalsIgnoreCase(showToCVal);
-
-            final String autoSpaceVal = preference.optString(Option.ID_C_AUTO_SPACE);
-            emptyPreferenceOptSave(Option.ID_C_AUTO_SPACE, autoSpaceVal);
-            Markdowns.AUTO_SPACE = "true".equalsIgnoreCase(autoSpaceVal);
-
-            final String fixTermTypoVal = preference.optString(Option.ID_C_FIX_TERM_TYPO);
-            emptyPreferenceOptSave(Option.ID_C_FIX_TERM_TYPO, fixTermTypoVal);
-            Markdowns.FIX_TERM_TYPO = "true".equalsIgnoreCase(fixTermTypoVal);
-
-            final String chinesePunctVal = preference.optString(Option.ID_C_CHINESE_PUNCT);
-            emptyPreferenceOptSave(Option.ID_C_CHINESE_PUNCT, chinesePunctVal);
-            Markdowns.CHINESE_PUNCT = "true".equalsIgnoreCase(chinesePunctVal);
-
-            final String IMADAOMVal = preference.optString(Option.ID_C_IMADAOM);
-            emptyPreferenceOptSave(Option.ID_C_IMADAOM, IMADAOMVal);
-            Markdowns.IMADAOM = "true".equalsIgnoreCase(IMADAOMVal);
-
             final String editorModeVal = preference.optString(Option.ID_C_EDITOR_MODE);
             emptyPreferenceOptSave(Option.ID_C_EDITOR_MODE, editorModeVal);
+
+            final String showCodeBlockLnVal = preference.optString(Option.ID_C_SHOW_CODE_BLOCK_LN);
+            emptyPreferenceOptSave(Option.ID_C_SHOW_CODE_BLOCK_LN, showCodeBlockLnVal);
+            final String footnotesVal = preference.optString(Option.ID_C_FOOTNOTES);
+            emptyPreferenceOptSave(Option.ID_C_FOOTNOTES, footnotesVal);
+            final String showToCVal = preference.optString(Option.ID_C_SHOW_TOC);
+            emptyPreferenceOptSave(Option.ID_C_SHOW_TOC, showToCVal);
+            final String autoSpaceVal = preference.optString(Option.ID_C_AUTO_SPACE);
+            emptyPreferenceOptSave(Option.ID_C_AUTO_SPACE, autoSpaceVal);
+            final String fixTermTypoVal = preference.optString(Option.ID_C_FIX_TERM_TYPO);
+            emptyPreferenceOptSave(Option.ID_C_FIX_TERM_TYPO, fixTermTypoVal);
+            final String chinesePunctVal = preference.optString(Option.ID_C_CHINESE_PUNCT);
+            emptyPreferenceOptSave(Option.ID_C_CHINESE_PUNCT, chinesePunctVal);
+            final String IMADAOMVal = preference.optString(Option.ID_C_IMADAOM);
+            emptyPreferenceOptSave(Option.ID_C_IMADAOM, IMADAOMVal);
+            final String paragraphBeginningSpaceVal = preference.optString(Option.ID_C_PARAGRAPH_BEGINNING_SPACE);
+            emptyPreferenceOptSave(Option.ID_C_PARAGRAPH_BEGINNING_SPACE, paragraphBeginningSpaceVal);
+            final String speechVal = preference.optString(Option.ID_C_SPEECH);
+            emptyPreferenceOptSave(Option.ID_C_SPEECH, speechVal);
+            Markdowns.loadMarkdownOption(preference);
 
             transaction.commit();
 
@@ -268,6 +247,7 @@ public class PreferenceMgmtService {
 
     private void emptyPreferenceOptSave(final String optID, final String val) throws Exception {
         // 该方法用于向后兼容，如果数据库中不存在该配置项则创建再保存
+
         JSONObject opt = optionRepository.get(optID);
         if (null == opt) {
             opt = new JSONObject();

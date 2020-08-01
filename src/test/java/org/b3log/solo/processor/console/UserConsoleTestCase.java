@@ -50,7 +50,7 @@ public class UserConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
     }
 
     /**
@@ -72,16 +72,14 @@ public class UserConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
     }
 
     /**
      * getUsers.
-     *
-     * @throws Exception exception
      */
     @Test(dependsOnMethods = "getUser")
-    public void getUsers() throws Exception {
+    public void getUsers() {
         final MockRequest request = mockRequest();
         request.setRequestURI("/console/users/1/10/20");
 
@@ -91,7 +89,7 @@ public class UserConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
     }
 
     /**
@@ -113,7 +111,7 @@ public class UserConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
     }
 
     /**
@@ -136,6 +134,6 @@ public class UserConsoleTestCase extends AbstractTestCase {
         mockDispatcher(request, response);
 
         final String content = response.getString();
-        Assert.assertTrue(StringUtils.contains(content, "sc\":true"));
+        Assert.assertTrue(StringUtils.contains(content, "code\":0"));
     }
 }
