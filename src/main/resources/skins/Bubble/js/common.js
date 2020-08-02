@@ -302,8 +302,38 @@ window.Skin = {
   },
   four : function () {
     //write here to do something interesting things.
-
-
+    //不过滤 XSS, 显示 iframe 网页
+    window.SoloEditor.setContent(options.preview.markdown.sanitize = false);
+    admin.editors.articleEditor = new SoloEditor({
+      outline: true,
+      id: 'articleContent',
+      height: 500,
+      fun: fun,
+      previewMode: 'both',
+      resize: false,
+      typewriterMode: true,
+      options: {
+        preview: {
+          markdown: {
+            sanitize: false
+          }
+        }
+      }
+    });
+    admin.editors.abstractEditor = new SoloEditor({
+      id: 'abstract',
+      height: 200,
+      previewMode: 'editor',
+      resize: true,
+      typewriterMode: false,
+      options: {
+        preview: {
+          markdown: {
+            sanitize: false
+          }
+        }
+      }
+    });
 
     // $(document).ready(function () {
     //   var apSwitchTag = 0;
