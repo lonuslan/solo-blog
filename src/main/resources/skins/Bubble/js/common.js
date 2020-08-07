@@ -198,7 +198,6 @@ window.Skin = {
     $(document).ready(function () {
       //主页打字机效果
       const elementsString = $('#elements').text();
-      //$('#elements').text().empty();
       $('#elements').empty();
       //console.log(elementsString);
       const options = {
@@ -236,6 +235,7 @@ window.Skin = {
           $("#rightside").removeClass("rout").addClass("rin");
         }
       });
+      //展示评论
       if ($(".commentFont")[0]){
         $("#to_comment").show();
         //添加输入框文本提示
@@ -266,8 +266,7 @@ window.Skin = {
       }else{
         $("#to_comment").hide();
       };
-      // $("#rightside-config-hide").removeClass("rightside-in").addClass("rightside-out");
-      // $(".rightside-in").hide();
+      //模式切换
       var nowMode = "lightMode";
       $("#readmode").click(function () {
         // $("body").toggleClass("read-mode")
