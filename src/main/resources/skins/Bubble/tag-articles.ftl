@@ -22,9 +22,9 @@
 <body class="fn__flex-column">
 <div id="pjax" class="fn__flex-1">
     <#if pjax><!---- pjax {#pjax} start ----></#if>
-    <#include "macro-header.ftl">
+    <#include "define-header.ftl">
     <@header type='index'></@header>
-    <div class="wrapper">
+    <div class="wrapper_main web-topage">
         <h2 class="other__title"><a href="${servePath}/tags.html" class="ft__a">
                 ${allTagsLabel}</a> - ${tag.tagTitle}
         </h2>

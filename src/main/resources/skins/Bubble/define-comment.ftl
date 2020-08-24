@@ -24,7 +24,7 @@
         metaPlaceholder: {"nick":"昵称/QQ号(必填)","mail":"邮箱（接收提醒-必填）","link":"个人站点(选填)"},
         master: '6163aa7c062eae5ed4c4fd24f8635611',   //博主邮箱md5
         tagMeta: ["博主","小伙伴","访客"],     //标识字段名
-        friends:  [],  //小伙伴邮箱Md5
+        friends:  ['7c896fde1507145d79e85851c8b58b2b', 'b9351cadf17830fd9dd16e7f1179a37d', 'd8a55c57090003fb0f19acc04111a7cb'],  //小伙伴邮箱Md5
     });
     // function showDialog(){
     //     $(".vnick").focus(function () {

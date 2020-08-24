@@ -23,37 +23,29 @@
 <body class="fn__flex-column">
 <div id="pjax" class="fn__flex-1">
     <#if pjax><!---- pjax {#pjax} start ----></#if>
-    <#include "macro-header.ftl">
+<#--    <#include "macro-header.ftl">-->
+    <#include "define-header.ftl">
     <@header type='index'></@header>
-    <div class="wrapper">
+    <div class="wrapper_main web-topage">
         <#include "article-list.ftl">
     </div>
+
+    <!-- require APlayer -->
+    <link rel="stylesheet" href="https://img.lonuslan.com/lonuslan/20200729/APlayer.min.css">
+    <script src="https://img.lonuslan.com/lonuslan/20200729/APlayer.min.js"></script>
+    <!-- require MetingJS -->
+    <script src="https://img.lonuslan.com/lonuslan/20200729/Meting.min.js"></script>
+    <meting-js
+            server="netease"
+            type="playlist"
+            id="3002544701"
+            theme="#33ccff"
+            fixed="true"
+            list-max-height="150px"
+            list-folded="true">
+    </meting-js>
     <#if pjax><!---- pjax {#pjax} end ----></#if>
 </div>
-<meting-js
-        server="netease"
-        type="playlist"
-        id="3002544701"
-        theme="#33ccff"
-        fixed="true"
-        list-max-height="150px"
-        list-folded="true">
-</meting-js>
-<#--<div id="aplayer">-->
-
-<#--</div>-->
-<#--<script>-->
-<#--    const ap = new APlayer({-->
-<#--        container: document.getElementById('player'),-->
-<#--        fixed: true,-->
-<#--        audio: [{-->
-<#--            name: 'name',-->
-<#--            artist: 'artist',-->
-<#--            url: 'url.mp3',-->
-<#--            cover: 'cover.jpg',-->
-<#--        }]-->
-<#--    });-->
-<#--</script>-->
 <#include "footer.ftl">
 </body>
 </html>

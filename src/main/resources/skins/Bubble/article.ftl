@@ -30,7 +30,7 @@
 <body class="fn__flex-column">
 <div id="pjax" class="fn__flex-1">
     <#if pjax><!---- pjax {#pjax} start ----></#if>
-    <#include "macro-header.ftl">
+    <#include "define-header.ftl">
     <@header type="article"></@header>
     <div class="article__top" style="background-image: url(${article.articleImg1URL})">
         <div style="background-image: url(${article.articleImg1URL})"></div>

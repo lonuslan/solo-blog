@@ -27,7 +27,9 @@ window.Skin = {
     $('#headerDown').click(function () {
       $('html, body').animate({scrollTop: $(window).height()}, 300)
     })
-
+    $('#scroll_down').click(function () {
+      $('html, body').animate({scrollTop: $(window).height()}, 300)
+    })
     $(window).scroll(function (event) {
       $('.fn__progress').attr('value', parseInt($(window).scrollTop())).
       attr('max', parseInt($('body').outerHeight() -
@@ -183,13 +185,14 @@ window.Skin = {
       ]
     }
     let homeTopImg = window.cnblogsConfig.homeTopImg, bgImg;
-
+    //开启pjax
+    Util.initPjax;
     homeTopImg.length > 0 ?
         (homeTopImg.length > 1 ? bgImg = homeTopImg[randomNum(0, homeTopImg.length - 1)] : bgImg = homeTopImg[0])
         : bgImg = "";
     // console.log("bgImg -->" + bgImg)
     // console.log("测试----> 随机获取header图");
-    $('.header--index').css({
+    $('.full_page').css({
       'background': '#222 url('+bgImg+')  center center no-repeat',
       'background-size': 'cover'
     });
@@ -197,8 +200,8 @@ window.Skin = {
   three: function () {
     $(document).ready(function () {
       //主页打字机效果
-      const elementsString = $('#elements').text();
-      $('#elements').empty();
+      const elementsString = $('.elements').text();
+      $('.elements').empty();
       //console.log(elementsString);
       const options = {
         // 闪烁光标必须得有：上面的css和下面字符串内添加 ^1000 ，只要是当输入到^1000就解析闪烁的时间，1000ms。
@@ -207,7 +210,7 @@ window.Skin = {
         loop: true,
         cursorChar: '|'
       };
-      const typed = new Typed("#elements", options);
+      const typed = new Typed(".elements", options);
       show_animation();
       // //文章页article图片交替出现
       $("article").each(function (index, element) {
@@ -235,6 +238,50 @@ window.Skin = {
           $("#rightside").removeClass("rout").addClass("rin");
         }
       });
+
+      //禁止调试
+      // $(document).bind("contextmenu", function () { return false; });//禁止右键
+      // document.oncontextmenu = function () { return false; };
+      // document.onkeydown = function (event) {
+      //   if (event.keyCode == 123) {
+      //     event.preventDefault(); // 阻止默认事件行为
+      //     window.event.returnValue = false;
+      //   }
+      // };//禁止F12
+
+      const $nav = $('#nav')
+      //滑动时nav的处理
+      $(window).scroll(throttle(function (event) {
+        var currentTop = $(this).scrollTop();
+        var isDown = scrollDirection(currentTop);
+        if (currentTop > 56){
+          if (isDown){
+            if ($nav.hasClass('visible')) $nav.removeClass('visible');
+          }else {
+            if (!$nav.hasClass('visible')) $nav.addClass('visible');
+          }
+          $nav.addClass('fixed');
+        }else {
+          if (currentTop === 0) {
+            $nav.removeClass('fixed').removeClass('visible')
+          }
+        }
+      }, 200));
+      // $('#scroll_down').on('click', function () {
+      //   scrollToDest('.web-topage')
+      // })
+      var startDate = "2020/1/1";
+      var BirthDay = new Date(startDate)
+      var today = new Date()
+      var timeold = (today.getTime() - BirthDay.getTime())
+      var daysold = Math.floor(timeold / (24 * 60 * 60 * 1000))
+      $('.webinfo-runtime-count').text(daysold + " 天");
+      //动画加载
+      var endLoading = function () {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loading-box').classList.add("loaded")
+      }
+      window.addEventListener('load', endLoading)
       //展示评论
       if ($(".commentFont")[0]){
         $("#to_comment").show();
@@ -392,113 +439,59 @@ function show_animation(ajax) {
         });
       });
 };
+//页面互动相关
+var initTop = 0;
+function scrollDirection(currentTop) {
+  var result = currentTop > initTop // true is down & false is up
+  initTop = currentTop
+  return result
+};
+//nav滑动
+function throttle (func, wait, options) {
+  var timeout, context, args
+  var previous = 0
+  if (!options) options = {}
 
+  var later = function () {
+    previous = options.leading === false ? 0 : new Date().getTime()
+    timeout = null
+    func.apply(context, args)
+    if (!timeout) context = args = null
+  }
 
-function aplayerF() {
-  'use strict';
-  var aplayers = [],
-      loadMeting = function () {
-        function a(a, b) {
-          var c = {
-            container: a,
-            audio: b,
-            mini: null,
-            fixed: null,
-            autoplay: !1,
-            mutex: !0,
-            lrcType: 3,
-            listFolded: 1,
-            preload: 'auto',
-            theme: '#2980b9',
-            loop: 'all',
-            order: 'list',
-            volume: null,
-            listMaxHeight: null,
-            customAudioType: null,
-            storageName: 'metingjs'
-          };
-          if (b.length) {
-            b[0].lrc || (c.lrcType = 0);
-            var d = {};
-            for (var e in c) {
-              var f = e.toLowerCase();
-              (a.dataset.hasOwnProperty(f) || a.dataset.hasOwnProperty(e) || null !== c[e]) && (d[e] = a.dataset[f] || a.dataset[e] || c[e], ('true' === d[e] || 'false' === d[e]) && (d[e] = 'true' == d[e]))
-            }
-            aplayers.push(new APlayer(d))
-          }
-          for (var f = 0; f < aplayers.length; f++) try {
-            aplayers[f].lrc.hide();
-          } catch (a) {
-            console.log(a)
-          }
-          var lrcTag = 1;
-          $(".aplayer.aplayer-fixed").click(function () {
-            if (lrcTag == 1) {
-              for (var f = 0; f < aplayers.length; f++) try {
-                aplayers[f].lrc.show();
-              } catch (a) {
-                console.log(a)
-              }
-            }
-            lrcTag = 2;
-          });
-          var apSwitchTag = 0;
-          $(".aplayer.aplayer-fixed .aplayer-body").addClass("ap-hover");
-          $(".aplayer-miniswitcher").click(function () {
-            if (apSwitchTag == 0) {
-              $(".aplayer.aplayer-fixed .aplayer-body").removeClass("ap-hover");
-              $("#secondary").addClass("active");
-              apSwitchTag = 1;
-            } else {
-              $(".aplayer.aplayer-fixed .aplayer-body").addClass("ap-hover");
-              $("#secondary").removeClass("active");
-              apSwitchTag = 0;
-            }
-          });
-        }
-        var b = mashiro_option.meting_api_url + '?server=:server&type=:type&id=:id&_wpnonce=' + Poi.nonce;
-        'undefined' != typeof meting_api && (b = meting_api);
-        for (var f = 0; f < aplayers.length; f++) try {
-          aplayers[f].destroy()
-        } catch (a) {
-          console.log(a)
-        }
-        aplayers = [];
-        for (var c = document.querySelectorAll('.aplayer'), d = function () {
-          var d = c[e],
-              f = d.dataset.id;
-          if (f) {
-            var g = d.dataset.api || b;
-            g = g.replace(':server', d.dataset.server), g = g.replace(':type', d.dataset.type), g = g.replace(':id', d.dataset.id);
-            var h = new XMLHttpRequest;
-            h.onreadystatechange = function () {
-              if (4 === h.readyState && (200 <= h.status && 300 > h.status || 304 === h.status)) {
-                var b = JSON.parse(h.responseText);
-                a(d, b)
-              }
-            }, h.open('get', g, !0), h.send(null)
-          } else if (d.dataset.url) {
-            var i = [{
-              name: d.dataset.name || d.dataset.title || 'Audio name',
-              artist: d.dataset.artist || d.dataset.author || 'Audio artist',
-              url: d.dataset.url,
-              cover: d.dataset.cover || d.dataset.pic,
-              lrc: d.dataset.lrc,
-              type: d.dataset.type || 'auto'
-            }];
-            a(d, i)
-          }
-        }, e = 0; e < c.length; e++) d()
-      };
-  document.addEventListener('DOMContentLoaded', loadMeting, !1);
-}
+  var throttled = function () {
+    var now = new Date().getTime()
+    if (!previous && options.leading === false) previous = now
+    var remaining = wait - (now - previous)
+    context = this
+    args = arguments
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout)
+        timeout = null
+      }
+      previous = now
+      func.apply(context, args)
+      if (!timeout) context = args = null
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining)
+    }
+  }
 
+  return throttled
+};
+function scrollToDest (name, offset = 0) {
+  var scrollOffset = $(name).offset()
+  $('body,html').animate({
+    scrollTop: scrollOffset.top - offset
+  })
+};
 
 $(document).ready(function () {
   Skin.init();
   Skin.next();
   Skin.three();
-  Skin.four();
+  // Skin.four();
   // show_animation();
   // postFloat();
   // toAnotherBlog();

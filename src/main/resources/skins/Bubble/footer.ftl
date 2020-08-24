@@ -19,8 +19,8 @@
         <a href="${servePath}">${blogTitle}</a>
         ${footerContent}
         <span class="footer__heart">❤️</span>
-        Powered by <a href="https://lonuslan.com" target="_blank">lonus lan</a>
-        Theme ${skinDirName}
+        Powered by <a href="https://solo.b3log.org/" target="_blank">solo</a>
+        Theme ✨ solo-Butterfly
         <sup>[<a href="https://github.com/lonuslan/solo-blog" target="_blank">ref</a>]</sup>
         modified by <a href="https://github.com/lonuslan" target="_blank">lonus lan</a> <br>
     </div>
