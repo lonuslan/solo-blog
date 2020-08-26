@@ -281,7 +281,9 @@ window.Skin = {
         document.body.style.overflow = 'auto';
         document.getElementById('loading-box').classList.add("loaded")
       }
-      window.addEventListener('load', endLoading)
+      window.addEventListener('load', endLoading);
+      //时间轴
+      timeSeriesReload(false);
       //展示评论
       if ($(".commentFont")[0]){
         $("#to_comment").show();
@@ -485,6 +487,55 @@ function scrollToDest (name, offset = 0) {
   $('body,html').animate({
     scrollTop: scrollOffset.top - offset
   })
+};
+//时间轴
+function timeSeriesReload(flag) {
+  if (flag == true) {
+    $('#archives span.al_mon').click(function () {
+      $(this).next().slideToggle(400);
+      return false;
+    });
+    // lazyload();
+  } else {
+    (function () {
+      $('#al_expand_collapse,#archives span.al_mon').css({cursor: "pointer"});
+      $('#archives span.al_mon').each(function () {
+        var num = $(this).next().children('li').length;
+        $(this).children('#post-num').text(num);
+      });
+      var $al_post_list = $('#archives ul.al_post_list'),
+          $al_post_list_f = $('#archives ul.al_post_list:first');
+      $al_post_list.hide(1, function () {
+        $al_post_list_f.show();
+      });
+      $('#archives span.al_mon').click(function () {
+        $(this).next().slideToggle(400);
+        return false;
+      });
+      if (document.body.clientWidth > 860) {
+        $('#archives li.al_li').mouseover(function () {
+          $(this).children('.al_post_list').show(400);
+          return false;
+        });
+        if (false) {
+          $('#archives li.al_li').mouseout(function () {
+            $(this).children('.al_post_list').hide(400);
+            return false;
+          });
+        }
+      }
+      var al_expand_collapse_click = 0;
+      $('#al_expand_collapse').click(function () {
+        if (al_expand_collapse_click == 0) {
+          $al_post_list.show();
+          al_expand_collapse_click++;
+        } else if (al_expand_collapse_click == 1) {
+          $al_post_list.hide();
+          al_expand_collapse_click--;
+        }
+      });
+    })();
+  }
 };
 
 $(document).ready(function () {

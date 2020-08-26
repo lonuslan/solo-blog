@@ -13,9 +13,47 @@
     <@header type='index'></@header>
 
     <div class="time_axis_main">
-        <div style="height: 1200px">
-            <h1>时间轴</h1>
+        <div>
+            <div class="times_axis_h1_span" style="text-align: center;"><h1>时间轴</h1>
+                <br>
+                <span>${archiveDates?size} ${cntMonthLabel}</span>
+                <br>
+                <span>${statistic.statisticPublishedBlogArticleCount} ${cntArticleLabel}
+                </span>
+            </div>
         </div>
+        <article class="art">
+            <div class="art-main">
+                <div class="art-content">
+                    <div id="archives"><p style="text-align:right;font-size: 1.1rem">[<span id="al_expand_collapse"
+                                                                           style="cursor: pointer;">全部展开/收缩</span>]
+                        </p>
+                        <#if 0 != archiveDates?size>
+                            <#assign last=""/>
+                            <#list archiveDates as archiveDate>
+                                <#if archiveDate.archiveDateYear != last>
+                                    <h3 class="al_year">${archiveDate.archiveDateYear} ${yearLabel}</h3>
+                                </#if>
+                                <#assign last=archiveDate.archiveDateYear/>
+                                <ul class="al_mon_list">
+                                    <li class="al_li">
+                                        <span class="al_mon" style="cursor: s-resize;">${archiveDate.archiveDateMonth} ${monthLabel}</span>
+                                        <ul class="al_post_list" style="">
+                                            <li><a href="${servePath}/archives/${archiveDate.archiveDateYear}/${archiveDate.archiveDateMonth}"><span
+                                                            style="color:#0bf;">撰写了 </span>${archiveDate.archiveDatePublishedArticleCount} ${cntArticleLabel}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </#list>
+                        </#if>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+
     </div>
     <#if pjax><!---- pjax {#pjax} start ----></#if>
 </div>

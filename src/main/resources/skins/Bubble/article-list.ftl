@@ -269,7 +269,7 @@
         <div class="card card-tags">
             <div class="card-content">
                 <div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div>
-                <div class="card-tag-cloud">
+                <div class="card-tag-cloud tagcloud">
                     <#if 0 != mostUsedTags?size>
                     <#list mostUsedTags as tag>
                         <a rel="tag"
@@ -346,12 +346,15 @@
                         </div>
                     </div>
                     <div class="webinfo-item">
+                        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
                         <div class="webinfo-site-uv-name">本站在线访客数 :</div>
                         <div class="webinfo-site-uv-count" id="busuanzi_value_site_uv">${onlineVisitorCnt}</div>
+<#--                        busuanzi_value_site_uv-->
                     </div>
                     <div class="webinfo-item">
                         <div class="webinfo-site-name">本站总访问量 :</div>
                         <div class="webinfo-site-pv-count" id="busuanzi_value_site_pv">${statistic.statisticBlogViewCount}</div>
+<#--                        busuanzi_value_site_pv-->
                     </div>
                 </div>
             </div>
