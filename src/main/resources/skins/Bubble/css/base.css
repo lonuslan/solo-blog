@@ -2746,6 +2746,8 @@ a {
       color: #fff; }
   .footer:before {
     background-color: rgba(0, 0, 0, 0); }
+  .footer p a img {
+    margin-bottom: 3px; }
 
 .articles {
   margin: 40px auto;
@@ -3298,6 +3300,9 @@ h1 svg {
 #aside_content .card:not(:first-child) {
   margin-top: 1rem; }
 
+#aside_content .card-dark:not(:first-child) {
+  margin-top: 1rem; }
+
 .posts-main .post:not(:first-child) {
   margin-top: 2rem; }
 
@@ -3325,6 +3330,19 @@ h1 svg {
   -o-transition: all 0.3s;
   -ms-transition: all 0.3s;
   transition: all 0.3s; }
+
+#aside_content .card-dark {
+  overflow: hidden;
+  border-radius: 8px;
+  background: #232323;
+  -webkit-box-shadow: 0 4px 8px 6px rgba(7, 17, 27, 0.06);
+  box-shadow: 0 4px 8px 6px rgba(7, 17, 27, 0.06);
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  transition: all 0.3s;
+  margin-left: 15px; }
 
 #aside_content .card:hover {
   -webkit-box-shadow: 0 4px 12px 12px rgba(7, 17, 27, 0.15);
@@ -3402,7 +3420,8 @@ h1 svg {
   display: inline-block;
   padding: 0.3rem 0.3rem;
   font-size: 1rem;
-  text-decoration: none; }
+  text-decoration: none;
+  margin-right: 0.3rem; }
 
 #aside_content .card-tag-cloud a:hover {
   color: orangered !important; }

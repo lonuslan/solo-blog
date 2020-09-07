@@ -338,11 +338,13 @@ window.Skin = {
           $("body").addClass("body-dark").removeClass("body-light");
           $("p").addClass("p-dark").removeClass("p-light");
           $(".articles").addClass("article-dark").removeClass("article-light");
+          $(".cardlight").addClass("card-dark").removeClass("card")
           nowMode = "darkMode";
         }else {
           $("body").addClass("body-light").removeClass("body-dark");
           $("p").addClass("p-light").removeClass("p-dark");
           $(".articles").addClass("article-light").removeClass("article-dark");
+          $(".cardlight").addClass("card").removeClass("card-dark")
           nowMode = "lightMode";
         }
       });

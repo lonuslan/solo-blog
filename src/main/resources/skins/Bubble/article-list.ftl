@@ -193,7 +193,7 @@
     </div>
 
     <div class = "aside_content" id = "aside_content">
-        <div class="card card-info">
+        <div class="cardlight card card-info">
             <div class="card-content">
                 <div class="card-info-avatar is-center"><img class="avatar-img"
                                                              onerror="this.onerror=null;this.src=null;"
@@ -230,7 +230,7 @@
                                 class="fas fa-envelope"></i></a></div>
             </div>
         </div>
-        <div class="card card-announcement">
+        <div class="cardlight card card-announcement">
             <div class="card-content">
                 <div class="item-headline"><i
                             class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div>
@@ -260,13 +260,13 @@
                 </div>
             </div>
         </div>
-        <div class="card card-recentPosts">
+        <div class="cardlight card card-recentPosts">
             <div class="card-content">
                 <div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div>
 
             </div>
         </div>
-        <div class="card card-tags">
+        <div class="cardlight card card-tags">
             <div class="card-content">
                 <div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div>
                 <div class="card-tag-cloud tagcloud">
@@ -282,7 +282,7 @@
                 </div>
             </div>
         </div>
-        <div class="card card-categories">
+        <div class="cardlight card card-categories">
             <div class="card-content">
                 <div class="item-headline"><i class="fas fa-folder-open"></i><span>分类</span></div>
                 <ul class="card-category-list">
@@ -299,7 +299,7 @@
                 </ul>
             </div>
         </div>
-        <div class="card card-archives">
+        <div class="cardlight card card-archives">
             <div class="card-content">
                 <div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div>
                 <ul class="card-archive-list">
@@ -331,7 +331,7 @@
                 </ul>
             </div>
         </div>
-        <div class="card card-webinfo">
+        <div class="cardlight card card-webinfo">
             <div class="card-content">
                 <div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div>
                 <div class="webinfo">
@@ -346,7 +346,7 @@
                         </div>
                     </div>
                     <div class="webinfo-item">
-                        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<#--                        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>-->
                         <div class="webinfo-site-uv-name">本站在线访客数 :</div>
                         <div class="webinfo-site-uv-count" id="busuanzi_value_site_uv">${onlineVisitorCnt}</div>
 <#--                        busuanzi_value_site_uv-->
