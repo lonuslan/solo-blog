@@ -29,12 +29,6 @@
     <div class="wrapper_main web-topage">
         <#include "article-list.ftl">
     </div>
-
-    <!-- require APlayer -->
-<#--    <link rel="stylesheet" href="https://img.lonuslan.com/lonuslan/20200729/APlayer.min.css">-->
-<#--    <script src="https://img.lonuslan.com/lonuslan/20200729/APlayer.min.js"></script>-->
-    <!-- require MetingJS -->
-<#--    <script src="https://img.lonuslan.com/lonuslan/20200729/Meting.min.js"></script>-->
     <meting-js
             server="netease"
             type="playlist"

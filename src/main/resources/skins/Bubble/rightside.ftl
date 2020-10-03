@@ -14,23 +14,4 @@
         <button id="go-up" type="button" title="回到頂部"><i class="fas fa-arrow-up"></i></button>
     </div>
 </div>
-<script>
-
-    // var E = GLOBAL_CONFIG.copyright;
-    // if (void 0 !== E && (document.body.oncopy = function (e) {
-    //     var t;
-    //     e.preventDefault();
-    //     var i = window.getSelection(0).toString();
-    //     return t = 45 < i.length ? i + "\n\n\n" + E.languages.author + "\n" + E.languages.link + window.location.href + "\n" + E.languages.source + "\n" + E.languages.info : i, e.clipboardData ? e.clipboardData.setData("text", t) : window.clipboardData.setData("text", t)
-    // }), $("#darkmode").click(function () {
-    //     "light" == ("dark" === document.documentElement.getAttribute("data-theme") ? "dark" : "light") ? (activateDarkMode(), Cookies.set("theme", "dark", 2), a && snackbarShow(GLOBAL_CONFIG.Snackbar.day_to_night)) : (activateLightMode(), Cookies.set("theme", "light", 2), a && snackbarShow(GLOBAL_CONFIG.Snackbar.night_to_day)), "function" == typeof utterancesTheme && utterancesTheme()
-    // }), GLOBAL_CONFIG.runtime) {
-    //     var j = $("#webinfo-runtime-count"), R = j.attr("publish_date"), M = function () {
-    //         var e = new Date(R), t = (new Date).getTime() - e.getTime(), i = Math.floor(t / 864e5);
-    //         j.text(i + " " + GLOBAL_CONFIG.runtime_unit)
-    //     };
-    //     M(), setInterval(M, 1e4)
-    // }
-</script>
-
 
